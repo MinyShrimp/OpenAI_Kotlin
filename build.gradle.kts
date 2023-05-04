@@ -26,10 +26,13 @@ dependencies {
     implementation("io.projectreactor.kotlin:reactor-kotlin-extensions")
     implementation("org.springframework.boot:spring-boot-starter-webflux")
     implementation("io.netty:netty-resolver-dns-native-macos:4.1.90.Final:osx-aarch_64")
+    testImplementation("io.mockk:mockk:1.13.4")
+    testImplementation("io.projectreactor:reactor-test")
 
     // Json
     implementation("com.google.code.gson:gson:2.10.1")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
+    testImplementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 }
 
 tasks.withType<KotlinCompile> {
