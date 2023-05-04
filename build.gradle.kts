@@ -19,19 +19,21 @@ dependencies {
     // Spring Boot
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.springframework.boot:spring-boot-starter")
-    testImplementation("org.springframework.boot:spring-boot-starter-test")
 
     // WebClient
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
     implementation("io.projectreactor.kotlin:reactor-kotlin-extensions")
     implementation("org.springframework.boot:spring-boot-starter-webflux")
     implementation("io.netty:netty-resolver-dns-native-macos:4.1.90.Final:osx-aarch_64")
-    testImplementation("io.mockk:mockk:1.13.4")
-    testImplementation("io.projectreactor:reactor-test")
 
     // Json
     implementation("com.google.code.gson:gson:2.10.1")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
+
+    // Test
+    testImplementation("io.mockk:mockk:1.13.4")
+    testImplementation("io.projectreactor:reactor-test")
+    testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 }
 
@@ -44,4 +46,11 @@ tasks.withType<KotlinCompile> {
 
 tasks.withType<Test> {
     useJUnitPlatform()
+}
+
+tasks.jar {
+    manifest {
+        attributes["Main-Class"] = "shrimp.openai_kotlin.OpenaiKotlinApplicationKt"
+    }
+    from(sourceSets.main.get().output)
 }
