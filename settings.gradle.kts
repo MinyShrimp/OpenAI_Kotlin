@@ -1,1 +1,2 @@
-rootProject.name = "openai_kotlin"
+rootProject.name = "openai-kotlin"
+include("openai-core")
