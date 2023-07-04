@@ -3,6 +3,7 @@ package shrimp.openai_core.config
 import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.PropertyNamingStrategies
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.ComponentScan
 import org.springframework.context.annotation.Configuration
@@ -14,7 +15,6 @@ import org.springframework.http.codec.json.Jackson2JsonEncoder
 import org.springframework.web.reactive.function.client.ExchangeStrategies
 import org.springframework.web.reactive.function.client.WebClient
 import shrimp.openai_core.base.OpenAIClient
-import shrimp.openai_core.utils.getApiKey
 
 /**
  * OpenAI와 통신을 위한 WebClient 객체의 기본 설정
@@ -25,25 +25,20 @@ import shrimp.openai_core.utils.getApiKey
 @Configuration
 @ComponentScan(basePackages = ["shrimp.openai_core"])
 open class OpenAIClientConfig(
-    private val env: Environment,
-    private val mapper: ObjectMapper
+    private val env: Environment
 ) {
     companion object {
         const val BASE_URL: String = "https://api.openai.com/v1"
     }
 
-    /**
-     * ObjectMapper 기본 설정
-     * <li>필드의 값이 null, isEmpty 인 경우 Json 문자열에 포함시키지 않음.</li>
-     * <li>객체 <-> Json 문자열 = camelCase <-> snake_case</li>
-     */
-    @Bean
-    open fun exchangeStrategy(): ExchangeStrategies {
-        mapper.run {
-            setDefaultPropertyInclusion(JsonInclude.Include.NON_NULL)
-                .setPropertyNamingStrategy(PropertyNamingStrategies.SNAKE_CASE)
-        }
+    private fun getApiKey(): String {
+        return env.getProperty("OPENAI_API_KEY")
+            ?: throw SecurityException("OPENAI_API_KEY is not set")
+    }
 
+    private fun getExchangeStrategy(
+        mapper: ObjectMapper
+    ): ExchangeStrategies {
         return ExchangeStrategies.builder()
             .codecs { configurer ->
                 configurer
@@ -59,6 +54,18 @@ open class OpenAIClientConfig(
     }
 
     /**
+     * ObjectMapper 기본 설정
+     * <li>필드의 값이 null 인 경우 Json 문자열에 포함시키지 않음.</li>
+     * <li>객체 <-> Json 문자열 = camelCase <-> snake_case</li>
+     */
+    @Bean
+    open fun objectMapper(): ObjectMapper {
+        return jacksonObjectMapper()
+            .setDefaultPropertyInclusion(JsonInclude.Include.NON_NULL)
+            .setPropertyNamingStrategy(PropertyNamingStrategies.SNAKE_CASE)
+    }
+
+    /**
      * WebClient 기본 설정
      * <li>Authorization: Bearer 'OPENAI_API_KEY'</li>
      * <li>Content-Type: application/json</li>
@@ -66,23 +73,16 @@ open class OpenAIClientConfig(
      */
     @Bean
     open fun openAIClient(
-        exchangeStrategy: ExchangeStrategies
+        mapper: ObjectMapper
     ): OpenAIClient {
         return OpenAIClient(
             WebClient
                 .builder()
-                .exchangeStrategies(exchangeStrategy)
-                .defaultHeader(HttpHeaders.AUTHORIZATION, getAuthToken())
+                .exchangeStrategies(getExchangeStrategy(mapper))
+                .defaultHeader(HttpHeaders.AUTHORIZATION, "Bearer ${getApiKey()}")
                 .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
                 .baseUrl(BASE_URL)
                 .build()
         )
-    }
-
-    /**
-     * Authorization 헤더 값 설정
-     */
-    private fun getAuthToken(): String {
-        return "Bearer " + getApiKey(env)
     }
 }

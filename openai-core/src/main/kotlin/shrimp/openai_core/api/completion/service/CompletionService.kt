@@ -1,6 +1,7 @@
 package shrimp.openai_core.api.completion.service
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.module.kotlin.readValue
 import org.springframework.stereotype.Service
 import org.springframework.web.reactive.function.client.WebClient
 import reactor.core.publisher.Flux
@@ -66,9 +67,7 @@ class CompletionService(
         return responseSpec
             .bodyToFlux(String::class.java)
             .filter { it != "[DONE]" }
-            .map {
-                objectMapper.readValue(it, T::class.java)
-            }
+            .map { objectMapper.readValue<T>(it) }
     }
 
     /**

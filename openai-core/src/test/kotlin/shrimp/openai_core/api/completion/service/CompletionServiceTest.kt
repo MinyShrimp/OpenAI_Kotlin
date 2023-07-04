@@ -1,6 +1,8 @@
 package shrimp.openai_core.api.completion.service
 
-import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.annotation.JsonInclude
+import com.fasterxml.jackson.databind.PropertyNamingStrategies
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import io.mockk.every
 import io.mockk.mockk
 import org.assertj.core.api.Assertions.assertThat
@@ -29,7 +31,10 @@ class CompletionServiceTest {
         private const val ID = "company-XXXXXXXXXXXXXXXXXXXXXXX"
     }
 
-    private val mapper = ObjectMapper()
+    private val mapper = jacksonObjectMapper()
+        .setDefaultPropertyInclusion(JsonInclude.Include.NON_NULL)
+        .setPropertyNamingStrategy(PropertyNamingStrategies.SNAKE_CASE)
+    
     private val webClient = mockk<WebClient>()
     private val openAIClient = OpenAIClient(webClient)
     private val service = CompletionService(
