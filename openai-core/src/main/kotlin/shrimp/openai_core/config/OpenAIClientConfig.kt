@@ -3,10 +3,8 @@ package shrimp.openai_core.config
 import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.PropertyNamingStrategies
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import org.springframework.context.annotation.Bean
-import org.springframework.context.annotation.ComponentScan
-import org.springframework.context.annotation.Configuration
+import org.springframework.boot.autoconfigure.jackson.Jackson2ObjectMapperBuilderCustomizer
+import org.springframework.context.annotation.*
 import org.springframework.core.env.Environment
 import org.springframework.http.HttpHeaders
 import org.springframework.http.MediaType
@@ -36,33 +34,37 @@ open class OpenAIClientConfig(
             ?: throw SecurityException("OPENAI_API_KEY is not set")
     }
 
-    private fun getExchangeStrategy(
-        mapper: ObjectMapper
-    ): ExchangeStrategies {
-        return ExchangeStrategies.builder()
-            .codecs { configurer ->
-                configurer
-                    .defaultCodecs()
-                    .jackson2JsonEncoder(Jackson2JsonEncoder(mapper))
-                configurer
-                    .defaultCodecs()
-                    .jackson2JsonDecoder(Jackson2JsonDecoder(mapper))
-                configurer
-                    .defaultCodecs()
-                    .maxInMemorySize(-1)
-            }.build()
-    }
-
     /**
      * ObjectMapper 기본 설정
      * <li>필드의 값이 null 인 경우 Json 문자열에 포함시키지 않음.</li>
      * <li>객체 <-> Json 문자열 = camelCase <-> snake_case</li>
      */
     @Bean
-    open fun objectMapper(): ObjectMapper {
-        return jacksonObjectMapper()
-            .setDefaultPropertyInclusion(JsonInclude.Include.NON_NULL)
-            .setPropertyNamingStrategy(PropertyNamingStrategies.SNAKE_CASE)
+    open fun jsonCustomizer(): Jackson2ObjectMapperBuilderCustomizer {
+        return Jackson2ObjectMapperBuilderCustomizer { builder ->
+            builder
+                .serializationInclusion(JsonInclude.Include.NON_NULL)
+                .propertyNamingStrategy(PropertyNamingStrategies.SNAKE_CASE)
+        }
+    }
+
+    @Bean
+    @DependsOn("jsonCustomizer")
+    open fun exchangeStrategies(
+        objectMapper: ObjectMapper
+    ): ExchangeStrategies {
+        return ExchangeStrategies.builder()
+            .codecs { configurer ->
+                configurer
+                    .defaultCodecs()
+                    .jackson2JsonEncoder(Jackson2JsonEncoder(objectMapper))
+                configurer
+                    .defaultCodecs()
+                    .jackson2JsonDecoder(Jackson2JsonDecoder(objectMapper))
+                configurer
+                    .defaultCodecs()
+                    .maxInMemorySize(-1)
+            }.build()
     }
 
     /**
@@ -72,13 +74,14 @@ open class OpenAIClientConfig(
      * <li>Base-URL: https://api.openai.com/v1</li>
      */
     @Bean
+    @DependsOn("exchangeStrategies")
     open fun openAIClient(
-        mapper: ObjectMapper
+        exchangeStrategies: ExchangeStrategies
     ): OpenAIClient {
         return OpenAIClient(
             WebClient
                 .builder()
-                .exchangeStrategies(getExchangeStrategy(mapper))
+                .exchangeStrategies(exchangeStrategies)
                 .defaultHeader(HttpHeaders.AUTHORIZATION, "Bearer ${getApiKey()}")
                 .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
                 .baseUrl(BASE_URL)
