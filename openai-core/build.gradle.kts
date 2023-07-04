@@ -1,25 +1,13 @@
 plugins {
     `java-library`
-    id("io.spring.dependency-management") version "1.1.0"
-    kotlin("jvm") version "1.8.22"
-}
-
-group = "shrimp"
-version = "1.0.0"
-
-java {
-    sourceCompatibility = JavaVersion.VERSION_17
-    targetCompatibility = JavaVersion.VERSION_17
-    modularity.inferModulePath.set(true)
-}
-
-repositories {
-    mavenCentral()
+    id("io.spring.dependency-management")
+    kotlin("jvm")
 }
 
 dependencyManagement {
     imports {
-        mavenBom("org.springframework.boot:spring-boot-dependencies:3.1.1")
+        val springBootVersion: String by project
+        mavenBom("org.springframework.boot:spring-boot-dependencies:${springBootVersion}")
     }
 }
 
@@ -40,17 +28,6 @@ configurations {
     compileOnly {
         extendsFrom(configurations.annotationProcessor.get())
     }
-}
-
-tasks.compileKotlin {
-    kotlinOptions {
-        freeCompilerArgs = listOf("-Xjsr305=strict")
-        jvmTarget = "17"
-    }
-}
-
-tasks.test {
-    useJUnitPlatform()
 }
 
 tasks.jar {
