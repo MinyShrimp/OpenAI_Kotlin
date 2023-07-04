@@ -10,7 +10,6 @@ import com.fasterxml.jackson.annotation.JsonProperty
  * @since 2023-03-26
  */
 class ModelListResponse(
-    @JsonProperty("object")
-    val obj: String? = null,
+    @JsonProperty("object") val obj: String? = null,
     val data: List<ModelResponse>? = null
 )

@@ -12,8 +12,10 @@ import org.springframework.web.reactive.function.client.WebClient
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 import reactor.test.StepVerifier
+import shrimp.openai_core.api.completion.entity.Message
+import shrimp.openai_core.api.completion.entity.Usage
 import shrimp.openai_core.api.completion.request.ChatCompletionRequest
-import shrimp.openai_core.api.completion.response.CompletionResponse
+import shrimp.openai_core.api.completion.response.ChatCompletionResponse
 import shrimp.openai_core.base.OpenAIClient
 
 /**
@@ -36,7 +38,7 @@ class ChatCompletionServiceTest {
         objectMapper = mapper
     )
 
-    private val expectedResponse = CompletionResponse(
+    private val expectedResponse = ChatCompletionResponse(
         id = ID,
         obj = "chat.completion",
         model = ChatCompletionRequest.Model.GPT_3_5_TURBO.value,
@@ -53,19 +55,19 @@ class ChatCompletionServiceTest {
 
             private val request = ChatCompletionRequest(
                 model = ChatCompletionRequest.Model.GPT_3_5_TURBO,
-                messages = listOf(ChatCompletionRequest.Message(content = "hello"))
+                messages = listOf(Message(content = "hello"))
             )
 
             private val response = expectedResponse.copy(
-                usage = CompletionResponse.Usage(
+                usage = Usage(
                     completionTokens = 9,
                     promptTokens = 9,
                     totalTokens = 18
                 ),
                 choices = listOf(
-                    CompletionResponse.Choice(
-                        message = CompletionResponse.Choice.Message(
-                            role = "assistant",
+                    ChatCompletionResponse.Choice(
+                        message = Message(
+                            role = Message.Role.ASSISTANT,
                             content = "hello"
                         ),
                         index = 0,
@@ -75,7 +77,7 @@ class ChatCompletionServiceTest {
             )
 
             private fun validatedCompletionResponse(
-                response: CompletionResponse
+                response: ChatCompletionResponse
             ) {
                 assertThat(response.id).isNotNull
                 assertThat(response.obj).isEqualTo("chat.completion")
@@ -86,7 +88,6 @@ class ChatCompletionServiceTest {
 
                 assertThat(response.choices).isNotNull
                 assertThat(response.choices?.size).isGreaterThan(0)
-                assertThat(response.choices?.get(0)?.text).isNull()
                 assertThat(response.choices?.get(0)?.message).isNotNull
                 assertThat(response.choices?.get(0)?.delta).isNull()
             }
@@ -102,7 +103,7 @@ class ChatCompletionServiceTest {
                             eq(ChatCompletionRequest::class.java)
                         )
                         .retrieve()
-                        .bodyToMono(CompletionResponse::class.java)
+                        .bodyToMono(ChatCompletionResponse::class.java)
                 } returns Mono.just(response)
             }
 
@@ -132,17 +133,17 @@ class ChatCompletionServiceTest {
         @DisplayName("성공")
         inner class Success {
             private val request = ChatCompletionRequest(
-                messages = listOf(ChatCompletionRequest.Message(content = "hello")),
+                messages = listOf(Message(content = "hello")),
                 stream = true
             )
 
-            private val choice = CompletionResponse.Choice(index = 0)
-            private val delta = CompletionResponse.Choice.Message()
+            private val choice = ChatCompletionResponse.Choice(index = 0)
+            private val delta = Message.deserializer(role = Message.Role.ASSISTANT)
 
             private val expectedEvents = listOf(
                 expectedResponse.copy(
                     choices = listOf(
-                        choice.copy(delta = delta.copy(role = "assistant"))
+                        choice.copy(delta = delta.copy())
                     )
                 ),
                 expectedResponse.copy(

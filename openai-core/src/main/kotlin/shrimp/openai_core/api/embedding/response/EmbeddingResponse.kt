@@ -11,8 +11,7 @@ import com.fasterxml.jackson.annotation.JsonProperty
  */
 class EmbeddingResponse(
     val model: String? = null,
-    @JsonProperty("object")
-    val obj: String? = null,
+    @JsonProperty("object") val obj: String? = null,
     val usage: Usage? = null,
     val data: List<Data>? = null
 ) {
@@ -23,8 +22,7 @@ class EmbeddingResponse(
 
     class Data(
         val index: Long? = null,
-        @JsonProperty("object")
-        val obj: String? = null,
+        @JsonProperty("object") val obj: String? = null,
         val embedding: List<Double>? = null
     )
 }

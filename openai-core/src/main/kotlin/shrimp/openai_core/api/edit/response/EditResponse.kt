@@ -8,9 +8,8 @@ import com.fasterxml.jackson.annotation.JsonProperty
  * @author 김회민
  * @since 2021-03-26
  */
-data class EditResponse(
-    @JsonProperty("object")
-    val obj: String? = null,
+class EditResponse(
+    @JsonProperty("object") val obj: String? = null,
     val created: Long? = null,
     val choices: List<Choice>? = null,
     val usage: Usage? = null,

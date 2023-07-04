@@ -15,7 +15,9 @@ import shrimp.openai_core.base.OpenAIClient
  * @since 2023-03-26
  */
 @Service
-class ModelService(private val openAIClient: OpenAIClient) {
+class ModelService(
+    private val openAIClient: OpenAIClient
+) {
 
     /**
      * GET /models. Async.

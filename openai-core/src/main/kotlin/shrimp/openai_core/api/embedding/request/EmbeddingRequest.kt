@@ -1,5 +1,6 @@
 package shrimp.openai_core.api.embedding.request
 
+import com.fasterxml.jackson.annotation.JsonCreator
 import com.fasterxml.jackson.annotation.JsonValue
 
 /**
@@ -14,7 +15,7 @@ class EmbeddingRequest(
     val input: List<String>
 ) {
 
-    enum class Model(
+    enum class Model @JsonCreator constructor(
         @JsonValue val value: String
     ) {
         EMBEDDING_ADA_002("text-embedding-ada-002"),

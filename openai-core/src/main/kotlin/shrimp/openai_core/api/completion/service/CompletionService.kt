@@ -7,6 +7,7 @@ import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 import shrimp.openai_core.api.completion.request.ChatCompletionRequest
 import shrimp.openai_core.api.completion.request.CompletionRequest
+import shrimp.openai_core.api.completion.response.ChatCompletionResponse
 import shrimp.openai_core.api.completion.response.CompletionResponse
 import shrimp.openai_core.base.OpenAIClient
 
@@ -59,14 +60,14 @@ class CompletionService(
      * Streaming Response
      * - 공통 부분 추출
      */
-    private fun fluxResponse(
+    private inline fun <reified T> fluxResponse(
         responseSpec: WebClient.ResponseSpec
-    ): Flux<CompletionResponse> {
+    ): Flux<T> {
         return responseSpec
             .bodyToFlux(String::class.java)
             .filter { it != "[DONE]" }
             .map {
-                objectMapper.readValue(it, CompletionResponse::class.java)
+                objectMapper.readValue(it, T::class.java)
             }
     }
 
@@ -86,7 +87,7 @@ class CompletionService(
     fun postCompletionStream(
         request: CompletionRequest
     ): Flux<CompletionResponse> {
-        return fluxResponse(
+        return fluxResponse<CompletionResponse>(
             postCompletionResponseSpec(request)
         )
     }
@@ -105,9 +106,9 @@ class CompletionService(
      */
     fun postChatCompletionAsync(
         request: ChatCompletionRequest
-    ): Mono<CompletionResponse> {
+    ): Mono<ChatCompletionResponse> {
         return postChatCompletionResponseSpec(request)
-            .bodyToMono(CompletionResponse::class.java)
+            .bodyToMono(ChatCompletionResponse::class.java)
     }
 
     /**
@@ -115,8 +116,8 @@ class CompletionService(
      */
     fun postChatCompletionStream(
         request: ChatCompletionRequest
-    ): Flux<CompletionResponse> {
-        return fluxResponse(
+    ): Flux<ChatCompletionResponse> {
+        return fluxResponse<ChatCompletionResponse>(
             postChatCompletionResponseSpec(request)
         )
     }
@@ -126,7 +127,7 @@ class CompletionService(
      */
     fun postChatCompletion(
         request: ChatCompletionRequest
-    ): CompletionResponse {
+    ): ChatCompletionResponse {
         return postChatCompletionAsync(request).block()!!
     }
 }

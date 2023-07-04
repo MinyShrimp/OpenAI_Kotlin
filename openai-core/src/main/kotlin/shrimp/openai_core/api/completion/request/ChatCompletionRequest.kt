@@ -1,7 +1,10 @@
 package shrimp.openai_core.api.completion.request
 
 import com.fasterxml.jackson.annotation.JsonCreator
+import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonValue
+import shrimp.openai_core.api.completion.entity.Message
+import java.util.*
 
 /**
  * Chat Completions API Request DTO
@@ -14,6 +17,7 @@ import com.fasterxml.jackson.annotation.JsonValue
 class ChatCompletionRequest(
     val model: Model = Model.GPT_3_5_TURBO,
     val messages: List<Message>,
+    val functions: List<Function>? = null,
     temperature: Double? = null,
     topP: Double? = null,
     n: Int? = null,
@@ -34,7 +38,6 @@ class ChatCompletionRequest(
     logitBias = logitBias,
     user = user
 ) {
-
     enum class Model @JsonCreator constructor(
         @JsonValue val value: String
     ) {
@@ -43,18 +46,21 @@ class ChatCompletionRequest(
         GPT_3_5_TURBO("gpt-3.5-turbo");
     }
 
-    class Message(
-        val role: Role = Role.USER,
-        val content: String,
-        val name: String? = null
+    class Function(
+        val name: String,
+        val description: String? = null,
+        val parameters: Parameter? = null
     ) {
-        enum class Role @JsonCreator constructor(
-            @JsonValue val value: String
+        class Parameter(
+            val type: String = "object",
+            val properties: Map<String, Property>? = null,
+            val required: List<String>? = null
         ) {
-            SYSTEM("system"),
-            USER("user"),
-            ASSISTANT("assistant"),
-            FUNCTION("function");
+            class Property(
+                val type: String,
+                val description: String? = null,
+                @JsonProperty("enum") val enums: List<String>? = null
+            )
         }
     }
 }

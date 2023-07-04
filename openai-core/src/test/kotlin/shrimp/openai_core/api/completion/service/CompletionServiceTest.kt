@@ -12,6 +12,9 @@ import org.springframework.web.reactive.function.client.WebClient
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 import reactor.test.StepVerifier
+import shrimp.openai_core.api.completion.entity.Usage
+import shrimp.openai_core.api.completion.request.CompletionRequest
+import shrimp.openai_core.api.completion.response.CompletionResponse
 import shrimp.openai_core.base.OpenAIClient
 
 /**
@@ -34,10 +37,10 @@ class CompletionServiceTest {
         objectMapper = mapper
     )
 
-    private val expectedResponse = shrimp.openai_core.api.completion.response.CompletionResponse(
+    private val expectedResponse = CompletionResponse(
         id = ID,
         obj = "text_completion",
-        model = shrimp.openai_core.api.completion.request.CompletionRequest.Model.DAVINCI_003.value,
+        model = CompletionRequest.Model.DAVINCI_003.value,
         created = 1600000000
     )
 
@@ -49,20 +52,20 @@ class CompletionServiceTest {
         @DisplayName("성공")
         inner class Success {
 
-            private val request = shrimp.openai_core.api.completion.request.CompletionRequest(
+            private val request = CompletionRequest(
                 prompt = listOf("This is a test")
             )
 
             private val response = expectedResponse.copy(
                 choices = listOf(
-                    shrimp.openai_core.api.completion.response.CompletionResponse.Choice(
+                    CompletionResponse.Choice(
                         text = "This is a test prompt",
                         index = 0,
                         logprobs = null,
                         finishReason = null
                     )
                 ),
-                usage = shrimp.openai_core.api.completion.response.CompletionResponse.Usage(
+                usage = Usage(
                     completionTokens = 16,
                     promptTokens = 4,
                     totalTokens = 20
@@ -70,11 +73,11 @@ class CompletionServiceTest {
             )
 
             private fun validatedCompletionResponse(
-                response: shrimp.openai_core.api.completion.response.CompletionResponse
+                response: CompletionResponse
             ) {
                 assertThat(response.id).isNotNull
                 assertThat(response.obj).isEqualTo("text_completion")
-                assertThat(response.model).isEqualTo(shrimp.openai_core.api.completion.request.CompletionRequest.Model.DAVINCI_003.value)
+                assertThat(response.model).isEqualTo(CompletionRequest.Model.DAVINCI_003.value)
                 assertThat(response.created).isNotNull
                 assertThat(response.usage).isNotNull
                 assertThat(response.choices).isNotNull
@@ -88,11 +91,11 @@ class CompletionServiceTest {
                         .post()
                         .uri("/completions")
                         .body(
-                            any<Mono<shrimp.openai_core.api.completion.request.CompletionRequest>>(),
-                            eq(shrimp.openai_core.api.completion.request.CompletionRequest::class.java)
+                            any<Mono<CompletionRequest>>(),
+                            eq(CompletionRequest::class.java)
                         )
                         .retrieve()
-                        .bodyToMono(shrimp.openai_core.api.completion.response.CompletionResponse::class.java)
+                        .bodyToMono(CompletionResponse::class.java)
                 } returns Mono.just(response)
             }
 
@@ -121,12 +124,12 @@ class CompletionServiceTest {
         @DisplayName("성공")
         inner class Success {
 
-            private val request = shrimp.openai_core.api.completion.request.CompletionRequest(
+            private val request = CompletionRequest(
                 prompt = listOf("This is a test"),
                 stream = true
             )
 
-            private val choice = shrimp.openai_core.api.completion.response.CompletionResponse.Choice(index = 0)
+            private val choice = CompletionResponse.Choice(index = 0)
 
             private val expectedEvents = listOf(
                 expectedResponse.copy(choices = listOf(choice.copy(text = " **"))),
@@ -150,8 +153,8 @@ class CompletionServiceTest {
                         .post()
                         .uri("/completions")
                         .body(
-                            any<Mono<shrimp.openai_core.api.completion.request.CompletionRequest>>(),
-                            eq(shrimp.openai_core.api.completion.request.CompletionRequest::class.java)
+                            any<Mono<CompletionRequest>>(),
+                            eq(CompletionRequest::class.java)
                         )
                         .retrieve()
                         .bodyToFlux(String::class.java)
