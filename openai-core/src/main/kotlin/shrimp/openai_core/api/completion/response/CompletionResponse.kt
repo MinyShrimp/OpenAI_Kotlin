@@ -21,8 +21,8 @@ data class CompletionResponse @JsonCreator constructor(
     @JsonProperty("choices") val choices: List<Choice>? = null
 ) {
     data class Choice @JsonCreator constructor(
-        @JsonProperty("text") val text: String? = null,
         @JsonProperty("index") val index: Int? = null,
+        @JsonProperty("text") val text: String? = null,
         @JsonProperty("logprobs") val logprobs: Logprobs? = null,
         @JsonProperty("finish_reason") val finishReason: String? = null,
     )

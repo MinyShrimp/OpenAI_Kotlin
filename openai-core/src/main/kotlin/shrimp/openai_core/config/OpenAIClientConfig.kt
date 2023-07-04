@@ -40,7 +40,7 @@ open class OpenAIClientConfig(
     @Bean
     open fun exchangeStrategy(): ExchangeStrategies {
         mapper.run {
-            setDefaultPropertyInclusion(JsonInclude.Include.NON_EMPTY)
+            setDefaultPropertyInclusion(JsonInclude.Include.NON_NULL)
                 .setPropertyNamingStrategy(PropertyNamingStrategies.SNAKE_CASE)
         }
 

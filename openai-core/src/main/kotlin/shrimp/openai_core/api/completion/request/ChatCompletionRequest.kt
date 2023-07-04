@@ -3,7 +3,8 @@ package shrimp.openai_core.api.completion.request
 import com.fasterxml.jackson.annotation.JsonCreator
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonValue
-import shrimp.openai_core.api.completion.entity.Message
+import shrimp.openai_core.api.completion.entity.FunctionCall
+import shrimp.openai_core.api.completion.entity.Role
 import java.util.*
 
 /**
@@ -45,6 +46,13 @@ class ChatCompletionRequest(
         GPT_4_32K("gpt-4-32k"),
         GPT_3_5_TURBO("gpt-3.5-turbo");
     }
+
+    class Message(
+        val role: Role = Role.USER,
+        val content: String,
+        val name: String? = null,
+        val functionCall: FunctionCall? = null
+    )
 
     class Function(
         val name: String,

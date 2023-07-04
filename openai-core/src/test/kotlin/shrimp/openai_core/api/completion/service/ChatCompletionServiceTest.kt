@@ -12,7 +12,7 @@ import org.springframework.web.reactive.function.client.WebClient
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 import reactor.test.StepVerifier
-import shrimp.openai_core.api.completion.entity.Message
+import shrimp.openai_core.api.completion.entity.Role
 import shrimp.openai_core.api.completion.entity.Usage
 import shrimp.openai_core.api.completion.request.ChatCompletionRequest
 import shrimp.openai_core.api.completion.response.ChatCompletionResponse
@@ -55,7 +55,7 @@ class ChatCompletionServiceTest {
 
             private val request = ChatCompletionRequest(
                 model = ChatCompletionRequest.Model.GPT_3_5_TURBO,
-                messages = listOf(Message(content = "hello"))
+                messages = listOf(ChatCompletionRequest.Message(content = "hello"))
             )
 
             private val response = expectedResponse.copy(
@@ -66,8 +66,8 @@ class ChatCompletionServiceTest {
                 ),
                 choices = listOf(
                     ChatCompletionResponse.Choice(
-                        message = Message(
-                            role = Message.Role.ASSISTANT,
+                        message = ChatCompletionResponse.Choice.Message(
+                            role = Role.ASSISTANT,
                             content = "hello"
                         ),
                         index = 0,
@@ -133,12 +133,12 @@ class ChatCompletionServiceTest {
         @DisplayName("성공")
         inner class Success {
             private val request = ChatCompletionRequest(
-                messages = listOf(Message(content = "hello")),
+                messages = listOf(ChatCompletionRequest.Message(content = "hello")),
                 stream = true
             )
 
             private val choice = ChatCompletionResponse.Choice(index = 0)
-            private val delta = Message.deserializer(role = Message.Role.ASSISTANT)
+            private val delta = ChatCompletionResponse.Choice.Message(role = Role.ASSISTANT)
 
             private val expectedEvents = listOf(
                 expectedResponse.copy(
