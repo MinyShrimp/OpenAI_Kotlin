@@ -39,3 +39,5 @@ out/
 ### NodeJS ###
 dist/
 node_modules/
+yarn-error.log
+vite-env.d.ts
