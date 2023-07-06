@@ -1,12 +1,12 @@
 import "../scss/App.scss";
-import LeftContainer from "./components/LeftContainer";
-import RightContainer from "./components/RightContainer";
+import MainLeftLayer from "./main/MainLeftLayer";
+import MainRightLayer from "./main/MainRightLayer";
 
 export default function App() {
     return (
         <div className="App">
-            <LeftContainer />
-            <RightContainer />
+            <MainLeftLayer/>
+            <MainRightLayer/>
         </div>
     );
 }
