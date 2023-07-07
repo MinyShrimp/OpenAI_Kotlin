@@ -81,7 +81,7 @@ export function NewPromptLayer(): JSX.Element {
             <Layer style={{overflowX: "hidden", overflowY: "auto", height: "85vh"}}>
                 <div style={{marginBottom: "1em"}}>{
                     promptList.map((item) =>
-                        <Accordion key={item._id}>
+                        <Accordion key={item._id} defaultExpanded={true}>
                             <AccordionSummary>
                                 <Typography
                                     style={{
