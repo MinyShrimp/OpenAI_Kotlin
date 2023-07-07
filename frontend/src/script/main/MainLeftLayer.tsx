@@ -1,4 +1,4 @@
-import {JSX} from "react";
+import {JSX, useState} from "react";
 import {Box, Divider, Grid, IconButton, Typography} from "@mui/material";
 import {Brightness4, Brightness7} from "@mui/icons-material";
 
@@ -7,6 +7,7 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 
 import {Layer} from "../base/Layer";
 import {LeftNavLayer} from "../left_navigation/LeftNavLayer";
+import {OptionModalLayer} from "../option/OptionModalLayer";
 
 export default function MainLeftLayer(
     props: {
@@ -14,6 +15,12 @@ export default function MainLeftLayer(
         darkModeHandler: () => void
     }
 ): JSX.Element {
+
+    const [optionModalOpen, setOptionModalOpen] = useState<boolean>(false);
+    const optionModalCloseHandler = (): void => {
+        setOptionModalOpen(false);
+    }
+
     return (
         <Box
             component={Layer}
@@ -35,17 +42,25 @@ export default function MainLeftLayer(
                 </Grid>
                 <Grid item xs={2} display="flex" alignContent="center">
                     <IconButton
-                        onClick={props.darkModeHandler} color="inherit"
+                        onClick={props.darkModeHandler}
+                        color="inherit"
                     >
                         {props.darkMode ? <Brightness7/> : <Brightness4/>}
                     </IconButton>
                 </Grid>
                 <Grid item xs={2} display="flex" alignContent="center">
-                    <IconButton>
+                    <IconButton
+                        onClick={() => setOptionModalOpen(true)}
+                        color="inherit"
+                    >
                         <FontAwesomeIcon icon={faGear}/>
                     </IconButton>
                 </Grid>
             </Grid>
+            <OptionModalLayer
+                isOpen={optionModalOpen}
+                closeHandler={optionModalCloseHandler}
+            />
         </Box>
     );
 }

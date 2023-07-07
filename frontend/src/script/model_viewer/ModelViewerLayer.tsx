@@ -28,12 +28,12 @@ export function ModelViewerLayer(): JSX.Element {
                         {field: 'id', headerName: 'ID', flex: 0.4, minWidth: 0},
                         {field: 'object', headerName: 'Object', flex: 0.1, minWidth: 0},
                         {
-                            field: 'created', headerName: 'Created', flex: 0.2, minWidth: 0,
+                            field: 'created', headerName: 'Created', flex: 0.15, minWidth: 0,
                             valueFormatter: params => {
                                 return new Date(params.value * 1000).toLocaleString();
                             }
                         },
-                        {field: 'owned_by', headerName: 'Owned_by', flex: 0.1, minWidth: 0},
+                        {field: 'owned_by', headerName: 'Owned_by', flex: 0.15, minWidth: 0},
                         {field: 'root', headerName: 'Root', flex: 0.1, minWidth: 0},
                         {field: 'parent', headerName: 'Parent', flex: 0.1, minWidth: 0},
                     ]}
