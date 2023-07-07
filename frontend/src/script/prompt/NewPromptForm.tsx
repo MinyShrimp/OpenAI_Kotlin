@@ -1,23 +1,18 @@
 import React, {forwardRef} from "react";
-import {Col, Form, Row} from "react-bootstrap";
-import {IconButton, TextareaAutosize} from "@mui/material";
+import {ButtonGroup, Col, Form, Row} from "react-bootstrap";
+
 import {DeleteOutlined} from "@mui/icons-material";
+import {IconButton, TextareaAutosize} from "@mui/material";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faEye, faEyeSlash} from "@fortawesome/free-solid-svg-icons";
 
-export interface PromptData {
-    _id: string,
-    index: number,
-    role: "system" | "assistant",
-    name: string,
-    content: string
-
-    [index: string]: number | string,
-}
+import {INewPromptData} from "./INewPromptData";
 
 export const NewPromptForm = forwardRef((
     props: {
-        item: PromptData,
-        changeEvent: (_id: string, key: string, value: string) => void,
-        deleteEvent: (prompt: PromptData) => void
+        item: INewPromptData,
+        changeEvent: (_id: string, key: string, value: string | boolean) => void,
+        deleteEvent: (prompt: INewPromptData) => void
     },
     ref: React.ForwardedRef<HTMLTextAreaElement> | undefined
 ) => {
@@ -26,15 +21,15 @@ export const NewPromptForm = forwardRef((
     }
 
     return (
-        <Form style={{marginBottom: "1em", position: "relative"}}>
+        <Form style={{position: "relative"}}>
             <Row style={{marginBottom: "0.5em"}}>
                 <Form.Group as={Col} controlId={"role_" + props.item.index}>
-                    <Form.Label>Role #{props.item.index}</Form.Label>
+                    <Form.Label>Role</Form.Label>
                     <Form.Select
                         name={"role"}
                         defaultValue={props.item.role}
                         onChange={onChangeEvent}
-                        disabled={props.item.index === 0}
+                        disabled={props.item.index === 0 || props.item.disabled}
                     >
                         <option value={"system"}>System</option>
                         <option value={"assistant"}>Assistant</option>
@@ -46,6 +41,7 @@ export const NewPromptForm = forwardRef((
                         type={"text"} placeholder={"Optional"} name={"name"}
                         defaultValue={props.item.name}
                         onChange={onChangeEvent}
+                        disabled={props.item.disabled}
                     />
                 </Form.Group>
             </Row>
@@ -55,21 +51,38 @@ export const NewPromptForm = forwardRef((
                     as={TextareaAutosize} minRows={3} name={"content"}
                     defaultValue={props.item.content}
                     onChange={onChangeEvent} ref={ref}
+                    disabled={props.item.disabled}
                 />
             </Form.Group>
-            <IconButton
-                aria-label={"delete"}
-                style={{
-                    position: "absolute",
-                    top: "-12px", right: "-10px"
-                }}
-                size={"large"}
-                color={"error"}
-                disabled={props.item.index === 0}
-                onClick={() => props.deleteEvent(props.item)}
+
+            <ButtonGroup style={{
+                position: "absolute",
+                top: "-12px", right: "-10px"
+            }}
             >
-                <DeleteOutlined fontSize="inherit"/>
-            </IconButton>
+                <IconButton
+                    aria-label="disabled"
+                    size={"small"}
+                    color={props.item.disabled ? "error" : "primary"}
+                    disabled={props.item.index === 0}
+                    onClick={() => props.changeEvent(props.item._id, "disabled", !props.item.disabled)}
+                >
+                    {
+                        props.item.disabled ?
+                            <FontAwesomeIcon icon={faEyeSlash}/>
+                            : <FontAwesomeIcon icon={faEye}/>
+                    }
+                </IconButton>
+                <IconButton
+                    aria-label={"delete"}
+                    size={"medium"}
+                    color={"error"}
+                    disabled={props.item.index === 0}
+                    onClick={() => props.deleteEvent(props.item)}
+                >
+                    <DeleteOutlined fontSize="inherit"/>
+                </IconButton>
+            </ButtonGroup>
         </Form>
     );
 });
