@@ -15,10 +15,10 @@ export function LeftNavLayer(): JSX.Element {
                 }
             >
                 <ListItemButton>
-                    <ListItemText primary={"Chat Completion"}/>
+                    <ListItemText primary={"Completion"}/>
                 </ListItemButton>
                 <ListItemButton>
-                    <ListItemText primary={"Completion"}/>
+                    <ListItemText primary={"Chat Completion"}/>
                 </ListItemButton>
                 <ListItemButton>
                     <ListItemText primary={"Model"}/>
@@ -30,7 +30,7 @@ export function LeftNavLayer(): JSX.Element {
                     <ListItemText primary={"Fine Tuning"}/>
                 </ListItemButton>
                 <ListItemButton>
-                    <ListItemText primary={"Moderation"}/>
+                    <ListItemText primary={"Dashboard"}/>
                 </ListItemButton>
             </List>
         </Layer>
