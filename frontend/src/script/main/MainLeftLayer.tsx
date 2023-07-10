@@ -6,7 +6,7 @@ import {faGear} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 
 import {Layer} from "../base/Layer";
-import {LeftNavLayer} from "../left_navigation/LeftNavLayer";
+import {MenuLayer} from "../menu/MenuLayer";
 import {OptionModalLayer} from "../option/OptionModalLayer";
 
 export default function MainLeftLayer(
@@ -33,7 +33,7 @@ export default function MainLeftLayer(
                 </Typography>
             </Box>
             <Divider/>
-            <LeftNavLayer/>
+            <MenuLayer/>
             <Divider/>
             <Grid container className={"footer"} marginTop="1em">
                 <Grid item xs={8}>

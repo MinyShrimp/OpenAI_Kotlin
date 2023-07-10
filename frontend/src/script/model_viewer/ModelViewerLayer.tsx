@@ -45,6 +45,7 @@ export function ModelViewerLayer(): JSX.Element {
                             },
                         },
                     }}
+                    pageSizeOptions={[20]}
                 />
             </Grid>
         </Grid>

@@ -1,10 +1,8 @@
 import {v4 as uuidv4} from "uuid";
 
 import {JSX, useEffect, useRef, useState} from "react";
-import {Button, ButtonGroup} from "react-bootstrap";
-import {Accordion, AccordionDetails, AccordionSummary, Typography} from "@mui/material";
-
-import {Layer} from "../base/Layer";
+import {Button} from "react-bootstrap";
+import {Accordion, AccordionDetails, AccordionSummary, Box, Typography} from "@mui/material";
 import {NewPromptForm} from "./NewPromptForm";
 import {INewPromptData} from "./INewPromptData";
 
@@ -77,8 +75,13 @@ export function NewPromptLayer(): JSX.Element {
     };
 
     return (
-        <Layer style={{justifyContent: "space-between"}}>
-            <Layer style={{overflowX: "hidden", overflowY: "auto", height: "85vh"}}>
+        <Box style={{height: "100%"}}>
+            <Box style={{
+                overflowX: "hidden",
+                overflowY: "auto",
+                height: "90%",
+                marginBottom: "1em"
+            }}>
                 <div style={{marginBottom: "1em"}}>{
                     promptList.map((item) =>
                         <Accordion key={item._id} defaultExpanded={true}>
@@ -110,14 +113,12 @@ export function NewPromptLayer(): JSX.Element {
                         ref={addButtonRef}
                     >+</Button>
                 </div>
-            </Layer>
+            </Box>
 
-            <div className={"footer"}>
-                <ButtonGroup>
-                    <Button variant="success" onClick={commit}>등록</Button>
-                    <Button variant="danger" onClick={cancel}>취소</Button>
-                </ButtonGroup>
-            </div>
-        </Layer>
+            <Box>
+                <Button variant="success" onClick={commit}>등록</Button>
+                <Button variant="danger" onClick={cancel}>취소</Button>
+            </Box>
+        </Box>
     );
 }
