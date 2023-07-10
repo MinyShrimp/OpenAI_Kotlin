@@ -15,7 +15,7 @@ export const MENU_ACTION = {
 export type MENU_ACTION = typeof MENU_ACTION[keyof typeof MENU_ACTION];
 
 export const initialMenuState = {
-    menu: MENU.MODEL
+    menu: MENU.CHAT_COMPLETION
 };
 
 export interface IMenuState {

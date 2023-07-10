@@ -5,16 +5,19 @@ import {useAppSelector} from "../RootStore";
 import {MENU} from "../menu/MenuTypes";
 import {ModelViewerLayer} from "../model_viewer/ModelViewerLayer";
 import {NewPromptLayer} from "../new_prompt/NewPromptLayer";
+import {ChatCompletionLayer} from "../chat_completion/ChatCompletionLayer";
 
 export default function MainRightLayer(): JSX.Element {
     const selector = useAppSelector((state) => state.menuReducer);
 
     const convertMenu = (menu: MENU): JSX.Element => {
         switch (menu) {
-            case MENU.MODEL:
-                return <ModelViewerLayer/>;
+            case MENU.CHAT_COMPLETION:
+                return <ChatCompletionLayer/>;
             case MENU.NEW_PROMPT:
                 return <NewPromptLayer/>;
+            case MENU.MODEL:
+                return <ModelViewerLayer/>;
             default:
                 return <></>;
         }

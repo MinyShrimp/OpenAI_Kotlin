@@ -1,12 +1,9 @@
 package shrimp.openai_api.controller
 
 import mu.KotlinLogging
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 import org.springframework.web.reactive.function.client.WebClientResponseException
-import shrimp.openai_core.api.completion.entity.Role
-import shrimp.openai_core.api.completion.request.ChatCompletionRequest
+import reactor.core.publisher.Flux
 import shrimp.openai_core.api.completion.service.CompletionService
 import java.util.*
 
@@ -17,21 +14,33 @@ class ChatCompletionController(
 ) {
     private val logger = KotlinLogging.logger {}
 
-    @GetMapping
-    fun testChatCompletion(): String {
-        val req = ChatCompletionRequest(
-            model = ChatCompletionRequest.Model.GPT_3_5_TURBO,
-            messages = listOf(
-                ChatCompletionRequest.Message(
-                    role = Role.USER,
-                    content = "Hi!"
-                )
-            )
-        )
-
+    @PostMapping
+    fun testChatCompletion(
+        @RequestHeader("Authorization") auth: String,
+        @RequestBody body: ChatCompletionDTO
+    ): String {
         try {
-            val resp = completionService.postChatCompletion(req)
+            val resp = completionService.postChatCompletion(body.convert())
             return Optional.ofNullable(resp.choices?.first()?.message?.content).orElse("")
+        } catch (e: WebClientResponseException.BadRequest) {
+            logger.error { e.responseBodyAsString }
+            throw e
+        }
+    }
+
+    @PostMapping(
+        "/stream",
+        produces = ["text/event-stream"]
+    )
+    fun streamTestChatCompletion(
+        @RequestHeader("Authorization") auth: String,
+        @RequestBody body: ChatCompletionDTO
+    ): Flux<String> {
+        try {
+            val resp = completionService.postChatCompletionStream(body.convert(true))
+            return resp.map {
+                it.choices?.first()?.delta?.content ?: ""
+            }
         } catch (e: WebClientResponseException.BadRequest) {
             logger.error { e.responseBodyAsString }
             throw e
