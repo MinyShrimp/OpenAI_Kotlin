@@ -13,7 +13,7 @@ export default function App() {
                     mode: darkMode ? 'dark' : 'light',
                     background: {
                         default: darkMode ? "#424242" : "#fff",
-                        paper: darkMode ? "#303030" : "#fafafa",
+                        paper: darkMode ? "#303030" : "#D3D3D3",
                     }
                 },
             }),

@@ -1,7 +1,8 @@
-import {ChangeEvent, JSX, KeyboardEvent, useRef, useState} from "react";
+import {ChangeEvent, JSX, KeyboardEvent, useState} from "react";
 import {Form} from "react-bootstrap";
 import {Box, TextareaAutosize} from "@mui/material";
 import {request} from "../base/request";
+import {PromptBox} from "./PromptBox";
 
 interface IHistoryPrompt {
     role: string;
@@ -9,9 +10,10 @@ interface IHistoryPrompt {
 }
 
 export function ChatCompletionLayer(): JSX.Element {
-    const message = useRef("");
+    const [message, setMessage] = useState<string>("");
     const [history, setHistory] = useState<IHistoryPrompt[]>([]);
     const [respMsg, setRespMsg] = useState<string>("");
+    const [pending, setPending] = useState<boolean>(false);
 
     const addHistory = ({role, content}: IHistoryPrompt): void => {
         setHistory(prevHistory => [...prevHistory, {
@@ -28,20 +30,22 @@ export function ChatCompletionLayer(): JSX.Element {
     }
 
     const onChange = (e: ChangeEvent<HTMLTextAreaElement>): void => {
-        message.current = e.target.value;
+        setMessage(e.target.value);
     }
 
     const submit = async (): Promise<void> => {
-        if (!message.current.trim()) {
+        if (!message.trim()) {
             return;
         }
 
         const prompt = {
             role: "user",
-            content: message.current
+            content: message
         }
 
         setRespMsg("");
+        setMessage("");
+        setPending(true);
         addHistory(prompt);
         const url = "http://localhost:8080/api/chat/stream";
         const reqHeader = {
@@ -58,27 +62,16 @@ export function ChatCompletionLayer(): JSX.Element {
             method: "POST",
             headers: reqHeader,
             body: JSON.stringify(reqBody)
-        }, (chunk): string => {
-            const value = chunk
-                .split("\n")
-                .filter((line: string) => line !== "")
-                .map((line: string) => {
-                    const match = RegExp(/data:(.*)/).exec(line);
-                    return match?.[1] ?? "";
-                })
-                .reduce((acc: string, curr: string) => {
-                    return acc + curr;
-                });
-
-            setRespMsg(prevRespMsg => prevRespMsg + value);
-            return value;
-        }).then((result): void => {
-            console.log("finally", result);
+        }, (chunk) => {
+            setRespMsg(prevRespMsg => prevRespMsg + chunk);
+            return chunk;
+        }).then((result) => {
             addHistory({
                 role: "assistant",
                 content: result
             });
             setRespMsg("");
+            setPending(false);
         });
     }
 
@@ -99,14 +92,12 @@ export function ChatCompletionLayer(): JSX.Element {
                     overflowY: "auto"
                 }}
             >
+                {history.map((item, index) => <PromptBox role={item.role} content={item.content} key={index}/>)}
                 {
-                    history.map((item, index) => <Box key={index}>
-                        {item.role}: {item.content}
-                    </Box>)
+                    !respMsg
+                        ? null
+                        : <PromptBox role="assistant" content={respMsg}/>
                 }
-                <Box>
-                    {!respMsg ? "" : "assistant: " + respMsg}
-                </Box>
             </Box>
             <Form
                 onKeyDown={onKeyDown}
@@ -120,12 +111,14 @@ export function ChatCompletionLayer(): JSX.Element {
                     as={TextareaAutosize}
                     maxRows={3}
                     placeholder="Send a message"
+                    value={message}
                     onChange={onChange}
                     style={{
                         width: "50%",
                         padding: "0.75rem",
                         minHeight: "24px"
                     }}
+                    disabled={pending}
                 />
             </Form>
         </Box>

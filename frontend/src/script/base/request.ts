@@ -8,6 +8,7 @@ export function request(
     chunkHandler: (chunk: string) => string,
 ): Promise<string> {
     let text = "";
+    let buffer = "";
     const decoder = new TextDecoder("utf-8");
 
     return fetch(data.url, {
@@ -28,7 +29,28 @@ export function request(
                     }
 
                     const chunk = decoder.decode(value);
-                    text += chunkHandler(chunk);
+                    buffer = buffer + chunk;
+
+                    // console.log("-------")
+                    // console.log("chunk:", JSON.stringify(chunk));
+                    // console.log("buffer:", JSON.stringify(buffer));
+
+                    const valid = buffer.match(/data:((?!data:).)*\n\n/gs);
+                    // console.log("valid:", valid);
+                    if (valid === null) {
+                        return readChunk();
+                    }
+
+                    const regChunk = valid
+                        .map(c => c
+                            .replace("\n\n", "")
+                            .replace("data:", "")
+                        )
+                        .reduce((acc, cur) => acc + cur, "");
+                    // console.log("regChunk:", JSON.stringify(regChunk));
+
+                    text += chunkHandler(regChunk ?? "");
+                    buffer = valid.reduce((tmp, c) => tmp.replace(c, ""), buffer);
                     return readChunk();
                 });
             }

@@ -1,9 +1,26 @@
 @import "~bootstrap/scss/bootstrap";
 
+p {
+  margin: 0;
+}
+
 body {
   margin: 0;
   padding: 0;
   height: 100vh;
   min-height: 600px;
   overflow: hidden;
+}
+
+.reactMarkDown ol, .reactMarkDown ul, .reactMarkDown dl {
+  margin: 0;
+  white-space: normal;
+}
+
+.reactMarkDown pre {
+  margin: 0;
+}
+
+.reactMarkDown pre button {
+  border: none;
 }

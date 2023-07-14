@@ -36,11 +36,6 @@ export function MenuLayer(): JSX.Element {
                     <ListItemText primary={"Chat Completion"}/>
                 </ListItemButton>
                 <ListItemButton
-                    onClick={() => setMenu(MENU.NEW_PROMPT)}
-                >
-                    <ListItemText primary={"New Prompt"}/>
-                </ListItemButton>
-                <ListItemButton
                     onClick={() => setMenu(MENU.MODEL)}
                 >
                     <ListItemText primary={"Model"}/>
