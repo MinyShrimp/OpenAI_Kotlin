@@ -26,10 +26,10 @@ export default function MainRightLayer(): JSX.Element {
     return (
         <Box
             component={Layer}
-            sx={{bgcolor: "background.secondary"}}
+            sx={{bgcolor: "background.default"}}
             style={{
                 width: "85%",
-                overflow: "auto",
+                overflow: "hidden",
             }}
         >
             {convertMenu(selector.menu)}

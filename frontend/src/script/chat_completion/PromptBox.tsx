@@ -1,31 +1,35 @@
 import {JSX} from "react";
-import {Box, useTheme} from "@mui/material";
+import {Box, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, useTheme} from "@mui/material";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import {CopyBlock, dracula, tomorrow} from "react-code-blocks";
+import {CodeProps, ReactMarkdownProps, TableRowProps} from "react-markdown/lib/ast-to-react";
 
-
-// @ts-ignore
-function PromptCodeBlock({node, inline, className, children, ...props}) {
-    const match = /language-(\w+)/.exec(className || '');
+function PromptCodeBlock({inline, className, children}: CodeProps) {
+    const match = /language-(\w+)/.exec(className ?? '');
     const theme = useTheme();
     const codeBlockTheme = theme.palette.mode === "light" ? tomorrow : dracula;
 
     return !inline && match ? (
+        // @ts-ignore
         <CopyBlock
             text={String(children).replace(/\n$/, "")}
             language={match[1]}
-            // @ts-ignore
-            theme={codeBlockTheme}
+            theme={{...codeBlockTheme, mode: theme.palette.mode}}
             codeBlock
         />
     ) : (
-        <code className={className} {...props}>
+        <code className={className}>
             {children}
         </code>
     )
 }
 
+const PromptTable = ({children}: ReactMarkdownProps) => <TableContainer><Table>{children}</Table></TableContainer>;
+const PromptTableHead = ({children}: ReactMarkdownProps) => <TableHead>{children}</TableHead>;
+const PromptTableBody = ({children}: ReactMarkdownProps) => <TableBody>{children}</TableBody>;
+const PromptTableRow = ({children}: TableRowProps) => <TableRow>{children}</TableRow>;
+const PromptTableCell = ({children}: ReactMarkdownProps) => <TableCell>{children}</TableCell>;
 
 export function PromptBox(
     props: {
@@ -51,8 +55,13 @@ export function PromptBox(
             className={"reactMarkDown"}
             remarkPlugins={[remarkGfm]}
             components={{
-                // @ts-ignore
-                code: PromptCodeBlock
+                code: PromptCodeBlock,
+                table: PromptTable,
+                thead: PromptTableHead,
+                tbody: PromptTableBody,
+                tr: PromptTableRow,
+                td: PromptTableCell,
+                th: PromptTableCell
             }}
         >
             {props.content}

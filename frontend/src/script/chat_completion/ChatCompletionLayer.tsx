@@ -1,8 +1,9 @@
 import {ChangeEvent, JSX, KeyboardEvent, useState} from "react";
 import {Form} from "react-bootstrap";
-import {Box, TextareaAutosize} from "@mui/material";
+import {Box, Container, IconButton, TextareaAutosize} from "@mui/material";
 import {request} from "../base/request";
 import {PromptBox} from "./PromptBox";
+import {PlusOne, PlusOneSharp} from "@mui/icons-material";
 
 interface IHistoryPrompt {
     role: string;
@@ -83,11 +84,11 @@ export function ChatCompletionLayer(): JSX.Element {
             height: "100%",
             maxHeight: "100%"
         }}>
-            <Box
+            <Container
+                maxWidth="lg"
                 style={{
                     display: "flex",
                     flexDirection: "column",
-                    marginBottom: "1em",
                     overflowX: "hidden",
                     overflowY: "auto"
                 }}
@@ -98,13 +99,17 @@ export function ChatCompletionLayer(): JSX.Element {
                         ? null
                         : <PromptBox role="assistant" content={respMsg}/>
                 }
-            </Box>
+            </Container>
             <Form
                 onKeyDown={onKeyDown}
                 style={{
                     width: "100%",
                     display: "flex",
                     justifyContent: "center",
+                    padding: "1em",
+                    paddingBottom: "0",
+                    borderTop: "1px solid",
+                    position: "relative"
                 }}
             >
                 <Form.Control
@@ -120,6 +125,21 @@ export function ChatCompletionLayer(): JSX.Element {
                     }}
                     disabled={pending}
                 />
+                <Box
+                    sx={{
+                        position: "absolute",
+                        right: "0",
+                        bottom: "-10px"
+                    }}
+                >
+                    <IconButton>
+                        <PlusOne/>
+                    </IconButton>
+                    <IconButton>
+                        <PlusOneSharp/>
+                    </IconButton>
+                </Box>
+
             </Form>
         </Box>
     );

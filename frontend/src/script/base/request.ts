@@ -28,6 +28,8 @@ export function request(
                         return text;
                     }
 
+                    // TODO
+                    //  - code block 위치 수정
                     const chunk = decoder.decode(value);
                     buffer = buffer + chunk;
 
