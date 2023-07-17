@@ -3,10 +3,15 @@ import {combineReducers} from "redux";
 import {configureStore} from "@reduxjs/toolkit";
 import {TypedUseSelectorHook, useDispatch, useSelector} from "react-redux";
 
-import {initialLeftState, LeftStateReducer} from "./states/left_state";
-import {initialRightState, RightStateReducer} from "./states/right_state";
+import {ContextReducer, defaultContextState} from "./states/context";
+import {defaultNowContextState, NowContextReducer} from "./states/now_context";
+
+import {defaultLeftState, LeftStateReducer} from "./states/left_state";
+import {defaultRightState, RightStateReducer} from "./states/right_state";
 
 const rootReducer = combineReducers({
+    contextReducer: ContextReducer,
+    nowContextReducer: NowContextReducer,
     leftStateReducer: LeftStateReducer,
     rightStateReducer: RightStateReducer
 });
@@ -15,8 +20,10 @@ export const rootStore = configureStore({
     reducer: rootReducer,
     devTools: true,
     preloadedState: {
-        leftStateReducer: initialLeftState,
-        rightStateReducer: initialRightState
+        contextReducer: defaultContextState,
+        nowContextReducer: defaultNowContextState,
+        leftStateReducer: defaultLeftState,
+        rightStateReducer: defaultRightState
     }
 });
 

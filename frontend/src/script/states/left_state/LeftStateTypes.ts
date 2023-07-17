@@ -9,10 +9,10 @@ export const LEFT_STATE_ACTION = {
 } as const;
 export type LEFT_STATE_ACTION = typeof LEFT_STATE_ACTION[keyof typeof LEFT_STATE_ACTION];
 
-export const initialLeftState = {
-    state: LEFT_STATE.DEFAULT
-};
-
 export interface ILeftState {
     state: LEFT_STATE
 }
+
+export const defaultLeftState: ILeftState = {
+    state: LEFT_STATE.DEFAULT
+};

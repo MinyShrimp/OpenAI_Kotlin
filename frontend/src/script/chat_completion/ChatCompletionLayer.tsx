@@ -1,27 +1,18 @@
 import {ChangeEvent, JSX, KeyboardEvent, useState} from "react";
 import {Form} from "react-bootstrap";
-
-import {PlusOneSharp} from "@mui/icons-material";
-import {Box, Container, IconButton, TextareaAutosize} from "@mui/material";
-
-import {faPlus} from "@fortawesome/free-solid-svg-icons";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {Box, Container, TextareaAutosize} from "@mui/material";
 
 import {request} from "../base/request";
 import {PromptBox} from "./PromptBox";
-
-interface IHistoryPrompt {
-    role: string;
-    content: string;
-}
+import {IPrompt} from "../states/context";
 
 export function ChatCompletionLayer(): JSX.Element {
     const [message, setMessage] = useState<string>("");
-    const [history, setHistory] = useState<IHistoryPrompt[]>([]);
+    const [history, setHistory] = useState<IPrompt[]>([]);
     const [respMsg, setRespMsg] = useState<string>("");
     const [pending, setPending] = useState<boolean>(false);
 
-    const addHistory = ({role, content}: IHistoryPrompt): void => {
+    const addHistory = ({role, content}: IPrompt): void => {
         setHistory(prevHistory => [...prevHistory, {
             role: role,
             content: content
@@ -44,7 +35,7 @@ export function ChatCompletionLayer(): JSX.Element {
             return;
         }
 
-        const prompt = {
+        const prompt: IPrompt = {
             role: "user",
             content: message
         }
@@ -130,21 +121,6 @@ export function ChatCompletionLayer(): JSX.Element {
                     }}
                     disabled={pending}
                 />
-                <Box
-                    sx={{
-                        position: "absolute",
-                        right: "0",
-                        bottom: "-10px"
-                    }}
-                >
-                    <IconButton>
-                        <FontAwesomeIcon icon={faPlus}/>
-                    </IconButton>
-                    <IconButton>
-                        <PlusOneSharp/>
-                    </IconButton>
-                </Box>
-
             </Form>
         </Box>
     );

@@ -1,8 +1,8 @@
 import {PayloadAction} from "@reduxjs/toolkit";
-import {ILeftState, initialLeftState, LEFT_STATE_ACTION} from "./LeftStateTypes";
+import {defaultLeftState, ILeftState, LEFT_STATE_ACTION} from "./LeftStateTypes";
 
 export const LeftStateReducer = (
-    state: ILeftState = initialLeftState,
+    state: ILeftState = defaultLeftState,
     action: PayloadAction<ILeftState, LEFT_STATE_ACTION>
 ): ILeftState => {
     switch (action.type) {

@@ -1,8 +1,8 @@
-import {initialRightState, IRightState, RIGHT_STATE_ACTION} from "./RightStateTypes";
 import {PayloadAction} from "@reduxjs/toolkit";
+import {defaultRightState, IRightState, RIGHT_STATE_ACTION} from "./RightStateTypes";
 
 export const RightStateReducer = (
-    state: IRightState = initialRightState,
+    state: IRightState = defaultRightState,
     action: PayloadAction<IRightState, RIGHT_STATE_ACTION>
 ): IRightState => {
     switch (action.type) {

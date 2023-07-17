@@ -1,17 +1,22 @@
 import {JSX} from "react";
-import {List, ListItemButton, ListItemText, ListSubheader} from "@mui/material";
-
-import {Layer} from "../base/Layer";
+import {List, ListItemButton, ListItemText, ListSubheader, Slide} from "@mui/material";
 
 import {MENU} from "./MenuTypes";
-import {useAppDispatch} from "../RootStore";
+import {LEFT_STATE} from "../states/left_state";
+import {useAppDispatch, useAppSelector} from "../RootStore";
+
 import {ConvertMenuToLRState} from "./ConvertMenuToLRState";
 
 export function MenuLayer(): JSX.Element {
     const dispatch = useAppDispatch();
+    const leftState = useAppSelector((selector) => selector.leftStateReducer)
 
     return (
-        <Layer style={{paddingLeft: "0", paddingRight: "0"}}>
+        <Slide
+            direction="right"
+            in={leftState.state === LEFT_STATE.DEFAULT}
+            style={{height: "100vh"}}
+        >
             <List
                 component="nav"
                 aria-labelledby="main_menu_list"
@@ -36,6 +41,6 @@ export function MenuLayer(): JSX.Element {
                         ))
                 }
             </List>
-        </Layer>
+        </Slide>
     );
 }

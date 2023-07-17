@@ -3,14 +3,26 @@ import {v4 as uuidv4} from "uuid";
 import {JSX, useEffect, useRef, useState} from "react";
 import {Button} from "react-bootstrap";
 import {Accordion, AccordionDetails, AccordionSummary, Box, Typography} from "@mui/material";
+
+import {useAppDispatch} from "../RootStore";
+import {setNowContextId} from "../states/now_context";
+import {CONTEXT_ACTION, IContext} from "../states/context";
+import {RIGHT_STATE, setRightState} from "../states/right_state";
+
 import {NewPromptForm} from "./NewPromptForm";
 import {INewPromptData} from "./INewPromptData";
 
 export function NewPromptLayer(): JSX.Element {
-    const [promptList, setPromptList] = useState<INewPromptData[]>([]);
+    const [promptList, setPromptList] = useState<INewPromptData[]>([{
+        _id: uuidv4(), index: 0,
+        role: "system", content: "", name: "",
+        disabled: false
+    }]);
     const promptIndex = useRef(0);
     const lastPromptItem = useRef<HTMLTextAreaElement>(null);
     const addButtonRef = useRef<HTMLButtonElement>(null);
+
+    const dispatch = useAppDispatch();
 
     const initPrompt = (): void => {
         setPromptList([{
@@ -66,12 +78,34 @@ export function NewPromptLayer(): JSX.Element {
     };
 
     const commit = (): void => {
-        const requestPromptList = promptList.filter((item) => !item.disabled);
-        console.log(requestPromptList);
+        const prePromptList = promptList
+            .filter((item) => !item.disabled && item.content)
+            .map((prompt) => {
+                return {
+                    role: prompt.role,
+                    name: prompt.name,
+                    content: prompt.content,
+                }
+            });
+
+        const context: IContext = {
+            id: uuidv4(),
+            title: prePromptList[0]?.content.slice(0, 10) ?? "New Prompt",
+            prePrompt: prePromptList,
+            history: []
+        };
+
+        dispatch({
+            type: CONTEXT_ACTION.ADD_CONTEXT,
+            payload: context
+        });
+        setNowContextId(dispatch, context.id);
+        setRightState(dispatch, RIGHT_STATE.CHAT_COMPLETION);
     };
 
     const cancel = (): void => {
         initPrompt();
+        setRightState(dispatch, RIGHT_STATE.CHAT_COMPLETION);
     };
 
     return (

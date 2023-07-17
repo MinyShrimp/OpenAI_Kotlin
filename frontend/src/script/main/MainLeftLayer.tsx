@@ -9,7 +9,7 @@ import {Layer} from "../base/Layer";
 
 import {MenuLayer} from "../menu/MenuLayer";
 import {OptionModalLayer} from "../option/OptionModalLayer";
-import {ChatCompletionListLayer} from "../chat_completion/ChatCompletionListLayer";
+import {ChatCompletionListLayer} from "../chat_completion_list/ChatCompletionListLayer";
 
 import {useAppSelector} from "../RootStore";
 import {LEFT_STATE} from "../states/left_state";

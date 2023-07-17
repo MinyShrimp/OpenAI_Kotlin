@@ -15,10 +15,10 @@ export const RIGHT_STATE_ACTION = {
 } as const;
 export type RIGHT_STATE_ACTION = typeof RIGHT_STATE_ACTION[keyof typeof RIGHT_STATE_ACTION];
 
-export const initialRightState = {
-    state: RIGHT_STATE.DEFAULT
-};
-
 export interface IRightState {
     state: RIGHT_STATE;
 }
+
+export const defaultRightState: IRightState = {
+    state: RIGHT_STATE.DEFAULT
+};
