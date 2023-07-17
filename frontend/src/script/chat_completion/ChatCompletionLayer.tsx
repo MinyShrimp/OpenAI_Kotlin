@@ -1,9 +1,14 @@
 import {ChangeEvent, JSX, KeyboardEvent, useState} from "react";
 import {Form} from "react-bootstrap";
+
+import {PlusOneSharp} from "@mui/icons-material";
 import {Box, Container, IconButton, TextareaAutosize} from "@mui/material";
+
+import {faPlus} from "@fortawesome/free-solid-svg-icons";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+
 import {request} from "../base/request";
 import {PromptBox} from "./PromptBox";
-import {PlusOne, PlusOneSharp} from "@mui/icons-material";
 
 interface IHistoryPrompt {
     role: string;
@@ -133,7 +138,7 @@ export function ChatCompletionLayer(): JSX.Element {
                     }}
                 >
                     <IconButton>
-                        <PlusOne/>
+                        <FontAwesomeIcon icon={faPlus}/>
                     </IconButton>
                     <IconButton>
                         <PlusOneSharp/>

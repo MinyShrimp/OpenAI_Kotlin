@@ -1,23 +1,26 @@
 import {JSX} from "react";
 import {Box} from "@mui/material";
+
 import {Layer} from "../base/Layer";
 import {useAppSelector} from "../RootStore";
-import {MENU} from "../menu/MenuTypes";
-import {ModelViewerLayer} from "../model_viewer/ModelViewerLayer";
+
 import {NewPromptLayer} from "../new_prompt/NewPromptLayer";
+import {ModelViewerLayer} from "../model_viewer/ModelViewerLayer";
 import {ChatCompletionLayer} from "../chat_completion/ChatCompletionLayer";
 
-export default function MainRightLayer(): JSX.Element {
-    const selector = useAppSelector((state) => state.menuReducer);
+import {RIGHT_STATE} from "../states/right_state";
 
-    const convertMenu = (menu: MENU): JSX.Element => {
-        switch (menu) {
-            case MENU.CHAT_COMPLETION:
+export default function MainRightLayer(): JSX.Element {
+    const selector = useAppSelector((state) => state.rightStateReducer);
+    const convertMenu = (state: RIGHT_STATE): JSX.Element => {
+        switch (state) {
+            case RIGHT_STATE.CHAT_COMPLETION:
                 return <ChatCompletionLayer/>;
-            case MENU.NEW_PROMPT:
+            case RIGHT_STATE.NEW_PROMPT:
                 return <NewPromptLayer/>;
-            case MENU.MODEL:
+            case RIGHT_STATE.MODEL:
                 return <ModelViewerLayer/>;
+            case RIGHT_STATE.DEFAULT:
             default:
                 return <></>;
         }
@@ -32,7 +35,7 @@ export default function MainRightLayer(): JSX.Element {
                 overflow: "hidden",
             }}
         >
-            {convertMenu(selector.menu)}
+            {convertMenu(selector.state)}
         </Box>
     );
 }

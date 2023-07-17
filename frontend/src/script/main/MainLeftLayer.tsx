@@ -6,8 +6,13 @@ import {faGear} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 
 import {Layer} from "../base/Layer";
+
 import {MenuLayer} from "../menu/MenuLayer";
 import {OptionModalLayer} from "../option/OptionModalLayer";
+import {ChatCompletionListLayer} from "../chat_completion/ChatCompletionListLayer";
+
+import {useAppSelector} from "../RootStore";
+import {LEFT_STATE} from "../states/left_state";
 
 export default function MainLeftLayer(
     props: {
@@ -15,10 +20,20 @@ export default function MainLeftLayer(
         darkModeHandler: () => void
     }
 ): JSX.Element {
-
     const [optionModalOpen, setOptionModalOpen] = useState<boolean>(false);
     const optionModalCloseHandler = (): void => {
         setOptionModalOpen(false);
+    }
+
+    const selector = useAppSelector((state) => state.leftStateReducer);
+    const convertMenu = (state: LEFT_STATE): JSX.Element => {
+        switch (state) {
+            case LEFT_STATE.CHAT_COMPLETION:
+                return <ChatCompletionListLayer/>;
+            case LEFT_STATE.DEFAULT:
+            default:
+                return <MenuLayer/>;
+        }
     }
 
     return (
@@ -33,7 +48,7 @@ export default function MainLeftLayer(
                 </Typography>
             </Box>
             <Divider/>
-            <MenuLayer/>
+            {convertMenu(selector.state)}
             <Divider/>
             <Grid container className={"footer"} marginTop="1em">
                 <Grid item xs={8}>

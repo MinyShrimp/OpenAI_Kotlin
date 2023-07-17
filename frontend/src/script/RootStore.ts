@@ -3,18 +3,20 @@ import {combineReducers} from "redux";
 import {configureStore} from "@reduxjs/toolkit";
 import {TypedUseSelectorHook, useDispatch, useSelector} from "react-redux";
 
-import {MenuReducer} from "./menu/MenuReducer";
-import {initialMenuState} from "./menu/MenuTypes";
+import {initialLeftState, LeftStateReducer} from "./states/left_state";
+import {initialRightState, RightStateReducer} from "./states/right_state";
 
 const rootReducer = combineReducers({
-    menuReducer: MenuReducer
+    leftStateReducer: LeftStateReducer,
+    rightStateReducer: RightStateReducer
 });
 
 export const rootStore = configureStore({
     reducer: rootReducer,
     devTools: true,
     preloadedState: {
-        menuReducer: initialMenuState
+        leftStateReducer: initialLeftState,
+        rightStateReducer: initialRightState
     }
 });
 

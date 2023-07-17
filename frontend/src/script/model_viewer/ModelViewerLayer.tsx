@@ -1,8 +1,9 @@
 import {JSX} from "react";
 
-import {DataGrid} from '@mui/x-data-grid';
-import {ModelList} from "./ModelListExample";
 import {Grid} from "@mui/material";
+import {DataGrid} from '@mui/x-data-grid';
+
+import {ModelList} from "./ModelListExample";
 
 export function ModelViewerLayer(): JSX.Element {
     const getModels = () => {
