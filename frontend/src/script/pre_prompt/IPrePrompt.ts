@@ -1,4 +1,4 @@
-export interface INewPromptData {
+export interface IPrePrompt {
     _id: string,
     index: number,
     role: "system" | "assistant",

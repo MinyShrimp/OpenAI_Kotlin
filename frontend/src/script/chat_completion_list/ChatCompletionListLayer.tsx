@@ -20,7 +20,6 @@ export function ChatCompletionListLayer(): JSX.Element {
         <Slide
             direction="right"
             in={leftState.state === LEFT_STATE.CHAT_COMPLETION}
-            style={{height: "100vh"}}
         >
             <List
                 component="nav"

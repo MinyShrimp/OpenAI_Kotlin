@@ -1,38 +1,35 @@
 import {v4 as uuidv4} from "uuid";
-
 import {JSX, useEffect, useRef, useState} from "react";
-import {Button} from "react-bootstrap";
-import {Accordion, AccordionDetails, AccordionSummary, Box, Typography} from "@mui/material";
+
+import {Accordion, AccordionDetails, AccordionSummary, Box, Button, Container, Typography} from "@mui/material";
+
+import {PromptForm} from "./PromptForm";
+import {IPrePrompt} from "./IPrePrompt";
 
 import {useAppDispatch} from "../RootStore";
+import {IContext, IPrompt} from "../states/context";
 import {setNowContextId} from "../states/now_context";
-import {CONTEXT_ACTION, IContext} from "../states/context";
 import {RIGHT_STATE, setRightState} from "../states/right_state";
 
-import {NewPromptForm} from "./NewPromptForm";
-import {INewPromptData} from "./INewPromptData";
+export function PromptElement(
+    props: {
+        commitHandler: (prePromptList: IPrompt[]) => IContext,
+        defaultPromptList: IPrePrompt[],
+    }
+): JSX.Element {
+    const dispatch = useAppDispatch();
 
-export function NewPromptLayer(): JSX.Element {
-    const [promptList, setPromptList] = useState<INewPromptData[]>([{
-        _id: uuidv4(), index: 0,
-        role: "system", content: "", name: "",
-        disabled: false
-    }]);
-    const promptIndex = useRef(0);
+    const promptIndex = useRef(props.defaultPromptList.length - 1);
+    const [promptList, setPromptList] = useState<IPrePrompt[]>(props.defaultPromptList);
+
     const lastPromptItem = useRef<HTMLTextAreaElement>(null);
     const addButtonRef = useRef<HTMLButtonElement>(null);
 
-    const dispatch = useAppDispatch();
-
-    const initPrompt = (): void => {
-        setPromptList([{
-            _id: uuidv4(), index: 0,
-            role: "system", content: "", name: "",
-            disabled: false
-        }]);
-        promptIndex.current = 0;
-    };
-    useEffect(initPrompt, []);
+    const init = (): void => {
+        promptIndex.current = props.defaultPromptList.length - 1;
+        setPromptList(props.defaultPromptList);
+    }
+    useEffect(init, [props.defaultPromptList]);
 
     const addPrompt = (): void => {
         promptIndex.current += 1;
@@ -61,7 +58,7 @@ export function NewPromptLayer(): JSX.Element {
         setPromptList([...promptList]);
     };
 
-    const deletePrompt = (prompt: INewPromptData): void => {
+    const deletePrompt = (prompt: IPrePrompt): void => {
         if (promptList.length === 1 || prompt.index === 0) {
             return;
         }
@@ -78,7 +75,7 @@ export function NewPromptLayer(): JSX.Element {
     };
 
     const commit = (): void => {
-        const prePromptList = promptList
+        const prePromptList: IPrompt[] = promptList
             .filter((item) => !item.disabled && item.content)
             .map((prompt) => {
                 return {
@@ -88,34 +85,31 @@ export function NewPromptLayer(): JSX.Element {
                 }
             });
 
-        const context: IContext = {
-            id: uuidv4(),
-            title: prePromptList[0]?.content.slice(0, 10) ?? "New Prompt",
-            prePrompt: prePromptList,
-            history: []
-        };
-
-        dispatch({
-            type: CONTEXT_ACTION.ADD_CONTEXT,
-            payload: context
-        });
+        const context = props.commitHandler(prePromptList);
         setNowContextId(dispatch, context.id);
         setRightState(dispatch, RIGHT_STATE.CHAT_COMPLETION);
     };
 
     const cancel = (): void => {
-        initPrompt();
+        init();
         setRightState(dispatch, RIGHT_STATE.CHAT_COMPLETION);
     };
 
     return (
-        <Box style={{height: "100%"}}>
-            <Box style={{
-                overflowX: "hidden",
-                overflowY: "auto",
-                height: "90%",
-                marginBottom: "1em"
-            }}>
+        <Box style={{
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "space-between",
+            height: "100%",
+            maxHeight: "100%"
+        }}>
+            <Container
+                maxWidth="lg"
+                style={{
+                    overflowX: "hidden",
+                    overflowY: "auto",
+                }}
+            >
                 <div style={{marginBottom: "1em"}}>{
                     promptList.map((item) =>
                         <Accordion key={item._id} defaultExpanded={true}>
@@ -129,7 +123,7 @@ export function NewPromptLayer(): JSX.Element {
                                 </Typography>
                             </AccordionSummary>
                             <AccordionDetails>
-                                <NewPromptForm
+                                <PromptForm
                                     item={item}
                                     changeEvent={changePrompt}
                                     deleteEvent={deletePrompt}
@@ -141,17 +135,23 @@ export function NewPromptLayer(): JSX.Element {
                 }</div>
                 <div>
                     <Button
-                        variant="primary"
+                        variant="contained"
+                        color="primary"
                         onClick={addPrompt}
                         style={{width: "100%"}}
                         ref={addButtonRef}
                     >+</Button>
                 </div>
-            </Box>
+            </Container>
 
-            <Box>
-                <Button variant="success" onClick={commit}>등록</Button>
-                <Button variant="danger" onClick={cancel}>취소</Button>
+            <Box
+                style={{
+                    padding: "1em",
+                    paddingBottom: "0"
+                }}
+            >
+                <Button variant="contained" color="success" onClick={commit}>등록</Button>
+                <Button variant="contained" color="error" onClick={cancel}>취소</Button>
             </Box>
         </Box>
     );

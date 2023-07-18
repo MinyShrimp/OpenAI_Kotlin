@@ -6,13 +6,13 @@ import {IconButton, TextareaAutosize} from "@mui/material";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faEye, faEyeSlash} from "@fortawesome/free-solid-svg-icons";
 
-import {INewPromptData} from "./INewPromptData";
+import {IPrePrompt} from "./IPrePrompt";
 
-export const NewPromptForm = forwardRef((
+export const PromptForm = forwardRef((
     props: {
-        item: INewPromptData,
+        item: IPrePrompt,
         changeEvent: (_id: string, key: string, value: string | boolean) => void,
-        deleteEvent: (prompt: INewPromptData) => void
+        deleteEvent: (prompt: IPrePrompt) => void
     },
     ref: React.ForwardedRef<HTMLTextAreaElement> | undefined
 ) => {

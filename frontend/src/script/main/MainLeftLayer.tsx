@@ -1,11 +1,9 @@
 import {JSX, useState} from "react";
-import {Box, Divider, Grid, IconButton, Typography} from "@mui/material";
+import {Box, Container, Divider, Grid, IconButton, Typography} from "@mui/material";
 import {Brightness4, Brightness7} from "@mui/icons-material";
 
 import {faGear} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-
-import {Layer} from "../base/Layer";
 
 import {MenuLayer} from "../menu/MenuLayer";
 import {OptionModalLayer} from "../option/OptionModalLayer";
@@ -38,19 +36,43 @@ export default function MainLeftLayer(
 
     return (
         <Box
-            component={Layer}
             sx={{bgcolor: "background.paper"}}
-            style={{width: "15%"}}
+            style={{
+                width: "15%",
+                display: "flex",
+                flexDirection: "column",
+                height: "100vh",
+            }}
         >
-            <Box className={"logo"} marginBottom="1em">
+            <Box
+                className="logo"
+                style={{
+                    padding: "1em"
+                }}
+            >
                 <Typography variant={"h5"}>
                     OpenAI Helper
                 </Typography>
             </Box>
             <Divider/>
-            {convertMenu(selector.state)}
+            <Container
+                className="menu"
+                style={{
+                    height: "100vh",
+                    overflowX: "hidden",
+                    overflowY: "auto",
+                }}
+            >
+                {convertMenu(selector.state)}
+            </Container>
             <Divider/>
-            <Grid container className={"footer"} marginTop="1em">
+            <Grid
+                container
+                className={"footer"}
+                style={{
+                    padding: "1em"
+                }}
+            >
                 <Grid item xs={8}>
                     <Typography> &copy; 2023. HRC </Typography>
                     kimhm@hrc.co.kr

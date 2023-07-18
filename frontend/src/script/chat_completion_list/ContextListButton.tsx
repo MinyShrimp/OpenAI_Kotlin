@@ -23,7 +23,7 @@ export function ContextListButton(
     const fixEventHandler = (event: MouseEvent) => {
         event.stopPropagation();
         setNowContextId(dispatch, props.context.id);
-        setRightState(dispatch, RIGHT_STATE.NEW_PROMPT);
+        setRightState(dispatch, RIGHT_STATE.CHANGE_PROMPT);
     }
 
     const deleteEventHandler = (event: MouseEvent) => {

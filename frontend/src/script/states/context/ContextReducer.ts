@@ -14,15 +14,13 @@ export const ContextReducer = (
                 ]
             };
         case CONTEXT_ACTION.CHANGE_CONTEXT:
-            const tmpContexts = [...state.contexts];
-            const index = tmpContexts.findIndex((value) => value.id === action.payload.id);
-            if (index === -1) {
-                return state;
-            }
-
-            tmpContexts[index].title = action.payload.title;
-            tmpContexts[index].prePrompt = [...action.payload.prePrompt];
-            return {contexts: [...tmpContexts]};
+            const {id, title, prePrompt} = action.payload;
+            const updatedContexts = state.contexts.map(
+                (context) => context.id === id
+                    ? {...context, title, prePrompt: [...prePrompt]}
+                    : context
+            );
+            return {contexts: updatedContexts};
         case CONTEXT_ACTION.DELETE_CONTEXT:
             const newContexts = state.contexts.filter((value) => value.id !== action.payload.id);
             return {contexts: [...newContexts]};

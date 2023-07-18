@@ -15,7 +15,6 @@ export function MenuLayer(): JSX.Element {
         <Slide
             direction="right"
             in={leftState.state === LEFT_STATE.DEFAULT}
-            style={{height: "100vh"}}
         >
             <List
                 component="nav"
