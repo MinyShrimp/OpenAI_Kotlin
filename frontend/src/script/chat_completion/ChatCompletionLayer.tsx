@@ -21,22 +21,7 @@ export function ChatCompletionLayer(): JSX.Element {
 
     useEffect(() => {
         setHistoris(getContext()?.history ?? []);
-    }, [nowContextState]);
-    
-    useEffect(() => {
-        if (historis.length === 0 || historis.length === getContext()?.history.length) {
-            return;
-        }
-
-        const history = historis[historis.length - 1];
-        dispatch({
-            type: CONTEXT_ACTION.ADD_HISTORY,
-            payload: {
-                id: nowContextState.id,
-                history: [history]
-            }
-        });
-    }, [historis]);
+    }, [nowContextState, contextState]);
 
     const getContext = () => contextState.contexts.find(context => context.id === nowContextState.id);
 
@@ -56,7 +41,13 @@ export function ChatCompletionLayer(): JSX.Element {
     }
 
     const addHistory = (history: IPrompt): void => {
-        setHistoris(prevHistory => [...prevHistory, history]);
+        dispatch({
+            type: CONTEXT_ACTION.ADD_HISTORY,
+            payload: {
+                id: nowContextState.id,
+                history: [history]
+            }
+        });
     }
 
     const onKeyDown = (e: KeyboardEvent<HTMLFormElement>): void => {
