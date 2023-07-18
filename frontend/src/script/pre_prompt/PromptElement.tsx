@@ -96,15 +96,17 @@ export function PromptElement(
     };
 
     return (
-        <Box style={{
-            display: "flex",
-            flexDirection: "column",
-            justifyContent: "space-between",
-            height: "100%",
-            maxHeight: "100%"
-        }}>
-            <Container
-                maxWidth="lg"
+        <Container
+            maxWidth="lg"
+            style={{
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "space-between",
+                height: "100%",
+                maxHeight: "100%"
+            }}
+        >
+            <Box
                 style={{
                     overflowX: "hidden",
                     overflowY: "auto",
@@ -142,17 +144,30 @@ export function PromptElement(
                         ref={addButtonRef}
                     >+</Button>
                 </div>
-            </Container>
+            </Box>
 
             <Box
                 style={{
                     padding: "1em",
-                    paddingBottom: "0"
+                    paddingBottom: "0",
+                    display: "flex",
+                    justifyContent: "center",
+                    gap: "1rem"
                 }}
             >
-                <Button variant="contained" color="success" onClick={commit}>등록</Button>
-                <Button variant="contained" color="error" onClick={cancel}>취소</Button>
+                <Button
+                    variant="contained"
+                    color="success"
+                    onClick={commit}
+                    style={{width: "50%", height: "40px"}}
+                >등록</Button>
+                <Button
+                    variant="contained"
+                    color="error"
+                    onClick={cancel}
+                    style={{width: "50%", height: "40px"}}
+                >취소</Button>
             </Box>
-        </Box>
+        </Container>
     );
 }
