@@ -1,14 +1,30 @@
-import {JSX} from "react";
+import {JSX, useEffect, useState} from "react";
 
 import {Grid} from "@mui/material";
 import {DataGrid} from '@mui/x-data-grid';
 
-import {ModelList} from "./ModelListExample";
-
 export function ModelViewerLayer(): JSX.Element {
-    const getModels = () => {
-        return ModelList;
-    }
+    // const [pending, setPending] = useState<boolean>(false);
+    const [models, setModels] = useState<any[]>([]);
+
+    useEffect(() => {
+        fetch(
+            import.meta.env.VITE_BACKEND_API_URL + "/model/list",
+            {
+                method: "GET",
+                headers: {
+                    Authorization: "Bearer " + (localStorage.getItem("openAiKey") ?? ""),
+                    "Content-Type": "application/json; charset=utf-8;"
+                }
+            }
+        ).then(
+            (response) => response.json()
+        ).then((data) => {
+            setModels(data);
+        }).finally(() => {
+            // setPending(true);
+        });
+    }, []);
 
     return (
         <Grid
@@ -24,7 +40,7 @@ export function ModelViewerLayer(): JSX.Element {
             <Grid item height="90%" minHeight="520px">
                 <DataGrid
                     style={{maxHeight: "100%"}}
-                    rows={getModels()}
+                    rows={models}
                     columns={[
                         {field: 'id', headerName: 'ID', flex: 0.4, minWidth: 0},
                         {field: 'object', headerName: 'Object', flex: 0.1, minWidth: 0},

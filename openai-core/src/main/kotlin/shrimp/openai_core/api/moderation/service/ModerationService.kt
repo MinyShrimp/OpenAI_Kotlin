@@ -5,6 +5,7 @@ import reactor.core.publisher.Mono
 import shrimp.openai_core.api.moderation.request.ModerationRequest
 import shrimp.openai_core.api.moderation.response.ModerationResponse
 import shrimp.openai_core.base.OpenAIClient
+import shrimp.openai_core.base.OpenAIOption
 
 /**
  * Moderation API Service
@@ -25,9 +26,10 @@ class ModerationService(
      * POST /moderations. Async.
      */
     fun postCreateModerationAsync(
-        request: ModerationRequest
+        request: ModerationRequest,
+        option: OpenAIOption? = null
     ): Mono<ModerationResponse> {
-        return client()
+        return client(option)
             .post()
             .uri("/moderations")
             .body(Mono.just(request), ModerationRequest::class.java)
@@ -39,8 +41,9 @@ class ModerationService(
      * POST /moderations. Blocking.
      */
     fun postCreateModeration(
-        request: ModerationRequest
+        request: ModerationRequest,
+        option: OpenAIOption? = null
     ): ModerationResponse {
-        return postCreateModerationAsync(request).block()!!
+        return postCreateModerationAsync(request, option).block()!!
     }
 }

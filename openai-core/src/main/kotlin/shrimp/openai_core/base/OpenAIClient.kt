@@ -9,8 +9,19 @@ import org.springframework.web.reactive.function.client.WebClient
  * @author 김회민
  * @since 2023-03-26
  */
-class OpenAIClient(private val webClient: WebClient) {
-    operator fun invoke(): WebClient {
-        return this.webClient
+class OpenAIClient(
+    private val webClient: WebClient
+) {
+    operator fun invoke(
+        option: OpenAIOption? = null
+    ): WebClient {
+        if (option == null) {
+            return this.webClient
+        }
+
+        val authPair = option.getAuthorization()
+        return this.webClient.mutate()
+            .defaultHeader(authPair.first, authPair.second)
+            .build()
     }
 }

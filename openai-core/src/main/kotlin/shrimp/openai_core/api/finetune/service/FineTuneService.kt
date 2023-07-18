@@ -6,6 +6,7 @@ import shrimp.openai_core.api.finetune.response.FineTuneEventListResponse
 import shrimp.openai_core.api.finetune.response.FineTuneListResponse
 import shrimp.openai_core.api.finetune.response.FineTuneResponse
 import shrimp.openai_core.base.OpenAIClient
+import shrimp.openai_core.base.OpenAIOption
 
 /**
  * Fine-Tunings API Service
@@ -22,8 +23,10 @@ class FineTuneService(
     /**
      * GET /fine-tunes. Async
      */
-    fun getFineTuneListAsync(): Mono<FineTuneListResponse> {
-        return openAIClient()
+    fun getFineTuneListAsync(
+        option: OpenAIOption? = null
+    ): Mono<FineTuneListResponse> {
+        return openAIClient(option)
             .get()
             .uri("/fine-tunes")
             .retrieve()
@@ -33,17 +36,20 @@ class FineTuneService(
     /**
      * GET /fine-tunes. Blocking
      */
-    fun getFineTuneList(): FineTuneListResponse {
-        return getFineTuneListAsync().block()!!
+    fun getFineTuneList(
+        option: OpenAIOption? = null
+    ): FineTuneListResponse {
+        return getFineTuneListAsync(option).block()!!
     }
 
     /**
      * GET /fine-tunes/{id}. Async
      */
     fun getFineTuneAsync(
-        id: String
+        id: String,
+        option: OpenAIOption? = null
     ): Mono<FineTuneResponse> {
-        return openAIClient()
+        return openAIClient(option)
             .get()
             .uri("/fine-tunes/$id")
             .retrieve()
@@ -53,17 +59,21 @@ class FineTuneService(
     /**
      * GET /fine-tunes/{id}. Blocking
      */
-    fun getFineTune(id: String): FineTuneResponse {
-        return getFineTuneAsync(id).block()!!
+    fun getFineTune(
+        id: String,
+        option: OpenAIOption? = null
+    ): FineTuneResponse {
+        return getFineTuneAsync(id, option).block()!!
     }
 
     /**
      * GET /fine-tunes/{id}/events. Async
      */
     fun getFineTuneEventListAsync(
-        id: String
+        id: String,
+        option: OpenAIOption? = null
     ): Mono<FineTuneEventListResponse> {
-        return openAIClient()
+        return openAIClient(option)
             .get()
             .uri("/fine-tunes/$id/events")
             .retrieve()
@@ -74,18 +84,20 @@ class FineTuneService(
      * GET /fine-tunes/{id}/events. Blocking
      */
     fun getFineTuneEventList(
-        id: String
+        id: String,
+        option: OpenAIOption? = null
     ): FineTuneEventListResponse {
-        return getFineTuneEventListAsync(id).block()!!
+        return getFineTuneEventListAsync(id, option).block()!!
     }
 
     /**
      * POST /fine-tunes. Async
      */
     fun postCreateFineTuneAsync(
-        request: FineTuneCreateRequest
+        request: FineTuneCreateRequest,
+        option: OpenAIOption? = null
     ): Mono<FineTuneResponse> {
-        return openAIClient()
+        return openAIClient(option)
             .post()
             .uri("/fine-tunes")
             .body(Mono.just(request), FineTuneCreateRequest::class.java)
@@ -97,18 +109,20 @@ class FineTuneService(
      * POST /fine-tunes. Blocking
      */
     fun postCreateFineTune(
-        request: FineTuneCreateRequest
+        request: FineTuneCreateRequest,
+        option: OpenAIOption? = null
     ): FineTuneResponse {
-        return postCreateFineTuneAsync(request).block()!!
+        return postCreateFineTuneAsync(request, option).block()!!
     }
 
     /**
      * POST /fine-tunes/{id}/cancel. Async
      */
     fun postCancelFineTuneAsync(
-        id: String
+        id: String,
+        option: OpenAIOption? = null
     ): Mono<FineTuneResponse> {
-        return openAIClient()
+        return openAIClient(option)
             .post()
             .uri("/fine-tunes/$id/cancel")
             .retrieve()
@@ -119,8 +133,9 @@ class FineTuneService(
      * POST /fine-tunes/{id}/cancel. Blocking
      */
     fun postCancelFineTune(
-        id: String
+        id: String,
+        option: OpenAIOption? = null
     ): FineTuneResponse {
-        return postCancelFineTuneAsync(id).block()!!
+        return postCancelFineTuneAsync(id, option).block()!!
     }
 }

@@ -11,6 +11,7 @@ import shrimp.openai_core.api.completion.request.CompletionRequest
 import shrimp.openai_core.api.completion.response.ChatCompletionResponse
 import shrimp.openai_core.api.completion.response.CompletionResponse
 import shrimp.openai_core.base.OpenAIClient
+import shrimp.openai_core.base.OpenAIOption
 
 /**
  * Completion API Service
@@ -34,9 +35,10 @@ class CompletionService(
      * - 공통 부분 추출
      */
     private fun postCompletionResponseSpec(
-        request: CompletionRequest
+        request: CompletionRequest,
+        option: OpenAIOption?
     ): WebClient.ResponseSpec {
-        return openAIClient()
+        return openAIClient(option)
             .post()
             .uri("/completions")
             .body(Mono.just(request), CompletionRequest::class.java)
@@ -48,9 +50,10 @@ class CompletionService(
      * - 공통 부분 추출
      */
     private fun postChatCompletionResponseSpec(
-        request: ChatCompletionRequest
+        request: ChatCompletionRequest,
+        option: OpenAIOption?
     ): WebClient.ResponseSpec {
-        return openAIClient()
+        return openAIClient(option)
             .post()
             .uri("/chat/completions")
             .body(Mono.just(request), ChatCompletionRequest::class.java)
@@ -74,9 +77,10 @@ class CompletionService(
      * POST /completions. Async
      */
     fun postCompletionAsync(
-        request: CompletionRequest
+        request: CompletionRequest,
+        option: OpenAIOption? = null
     ): Mono<CompletionResponse> {
-        return postCompletionResponseSpec(request)
+        return postCompletionResponseSpec(request, option)
             .bodyToMono(CompletionResponse::class.java)
     }
 
@@ -84,10 +88,11 @@ class CompletionService(
      * POST /completions. Stream
      */
     fun postCompletionStream(
-        request: CompletionRequest
+        request: CompletionRequest,
+        option: OpenAIOption? = null
     ): Flux<CompletionResponse> {
         return fluxResponse<CompletionResponse>(
-            postCompletionResponseSpec(request)
+            postCompletionResponseSpec(request, option)
         )
     }
 
@@ -95,18 +100,20 @@ class CompletionService(
      * POST /completions. Block
      */
     fun postCompletion(
-        request: CompletionRequest
+        request: CompletionRequest,
+        option: OpenAIOption? = null
     ): CompletionResponse {
-        return postCompletionAsync(request).block()!!
+        return postCompletionAsync(request, option).block()!!
     }
 
     /**
      * POST /chat/completions. Async
      */
     fun postChatCompletionAsync(
-        request: ChatCompletionRequest
+        request: ChatCompletionRequest,
+        option: OpenAIOption? = null
     ): Mono<ChatCompletionResponse> {
-        return postChatCompletionResponseSpec(request)
+        return postChatCompletionResponseSpec(request, option)
             .bodyToMono(ChatCompletionResponse::class.java)
     }
 
@@ -114,10 +121,11 @@ class CompletionService(
      * POST /chat/completions. Stream
      */
     fun postChatCompletionStream(
-        request: ChatCompletionRequest
+        request: ChatCompletionRequest,
+        option: OpenAIOption? = null
     ): Flux<ChatCompletionResponse> {
         return fluxResponse<ChatCompletionResponse>(
-            postChatCompletionResponseSpec(request)
+            postChatCompletionResponseSpec(request, option)
         )
     }
 
@@ -125,8 +133,9 @@ class CompletionService(
      * POST /chat/completions. Block
      */
     fun postChatCompletion(
-        request: ChatCompletionRequest
+        request: ChatCompletionRequest,
+        option: OpenAIOption? = null
     ): ChatCompletionResponse {
-        return postChatCompletionAsync(request).block()!!
+        return postChatCompletionAsync(request, option).block()!!
     }
 }

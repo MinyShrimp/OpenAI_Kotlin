@@ -5,6 +5,7 @@ import reactor.core.publisher.Mono
 import shrimp.openai_core.api.edit.request.EditRequest
 import shrimp.openai_core.api.edit.response.EditResponse
 import shrimp.openai_core.base.OpenAIClient
+import shrimp.openai_core.base.OpenAIOption
 
 /**
  * Edit API Service
@@ -22,9 +23,10 @@ class EditService(
      * POST /edits. Async.
      */
     fun postCreateEditAsync(
-        request: EditRequest
+        request: EditRequest,
+        option: OpenAIOption? = null
     ): Mono<EditResponse> {
-        return openAIClient()
+        return openAIClient(option)
             .post()
             .uri("/edits")
             .body(Mono.just(request), EditRequest::class.java)
@@ -36,8 +38,9 @@ class EditService(
      * POST /edits. Blocking.
      */
     fun postCreateEdit(
-        request: EditRequest
+        request: EditRequest,
+        option: OpenAIOption? = null
     ): EditResponse {
-        return postCreateEditAsync(request).block()!!
+        return postCreateEditAsync(request, option).block()!!
     }
 }

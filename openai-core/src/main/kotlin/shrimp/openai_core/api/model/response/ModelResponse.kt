@@ -9,7 +9,7 @@ import com.fasterxml.jackson.annotation.JsonProperty
  * @see <a href="https://platform.openai.com/docs/api-reference/models">Models API Document</a>
  * @since 2023-03-26
  */
-class ModelResponse(
+data class ModelResponse(
     val id: String? = null,
     @JsonProperty("object") val obj: String? = null,
     val created: Long? = null,
@@ -18,7 +18,7 @@ class ModelResponse(
     val parent: String? = null,
     val permission: List<Permission>? = null
 ) {
-    inner class Permission(
+    data class Permission(
         val id: String? = null,
         val isBlocking: Boolean? = null,
         @JsonProperty("object") val obj: String? = null,

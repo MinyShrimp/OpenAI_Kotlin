@@ -9,7 +9,7 @@ import com.fasterxml.jackson.annotation.JsonProperty
  * @author 김회민
  * @since 2023-03-26
  */
-class FileListResponse(
+data class FileListResponse(
     val data: List<FileResponse>? = null,
     @JsonProperty("object") val obj: String? = null
 )

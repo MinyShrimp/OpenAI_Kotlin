@@ -30,8 +30,7 @@ open class OpenAIClientConfig(
     }
 
     private fun getApiKey(): String {
-        return env.getProperty("OPENAI_API_KEY")
-            ?: throw SecurityException("OPENAI_API_KEY is not set")
+        return env.getProperty("OPENAI_API_KEY") ?: ""
     }
 
     /**

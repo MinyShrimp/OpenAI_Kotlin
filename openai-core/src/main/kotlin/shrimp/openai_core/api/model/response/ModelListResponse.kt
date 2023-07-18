@@ -9,7 +9,7 @@ import com.fasterxml.jackson.annotation.JsonProperty
  * @see <a href="https://platform.openai.com/docs/api-reference/models">Models API Document</a>
  * @since 2023-03-26
  */
-class ModelListResponse(
+data class ModelListResponse(
     @JsonProperty("object") val obj: String? = null,
     val data: List<ModelResponse>? = null
 )

@@ -9,18 +9,18 @@ import com.fasterxml.jackson.annotation.JsonProperty
  * @see <a href="https://platform.openai.com/docs/api-reference/embeddings">API Document</a>
  * @since 2023-03-26
  */
-class EmbeddingResponse(
+data class EmbeddingResponse(
     val model: String? = null,
     @JsonProperty("object") val obj: String? = null,
     val usage: Usage? = null,
     val data: List<Data>? = null
 ) {
-    class Usage(
+    data class Usage(
         val promptTokens: Long? = null,
         val totalTokens: Long? = null
     )
 
-    class Data(
+    data class Data(
         val index: Long? = null,
         @JsonProperty("object") val obj: String? = null,
         val embedding: List<Double>? = null

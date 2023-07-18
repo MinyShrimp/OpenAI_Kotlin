@@ -9,12 +9,12 @@ import com.fasterxml.jackson.annotation.JsonProperty
  * @author 김회민
  * @since 2023-03-27
  */
-class FineTuneEventListResponse(
+data class FineTuneEventListResponse(
     @JsonProperty("object") val obj: String? = null,
     val data: List<Event>? = null
 ) {
 
-    class Event(
+    data class Event(
         @JsonProperty("object") val obj: String? = null,
         val level: String? = null,
         val message: String? = null,

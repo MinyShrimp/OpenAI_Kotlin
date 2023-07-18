@@ -9,7 +9,7 @@ import com.fasterxml.jackson.annotation.JsonProperty
  * @author 김회민
  * @since 2023-03-26
  */
-class FileDeleteResponse(
+data class FileDeleteResponse(
     val id: String? = null,
     @JsonProperty("object") val obj: String? = null,
     val deleted: Boolean? = null

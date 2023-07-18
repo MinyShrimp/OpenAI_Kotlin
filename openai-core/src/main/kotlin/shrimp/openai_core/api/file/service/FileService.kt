@@ -8,6 +8,7 @@ import shrimp.openai_core.api.file.response.FileDeleteResponse
 import shrimp.openai_core.api.file.response.FileListResponse
 import shrimp.openai_core.api.file.response.FileResponse
 import shrimp.openai_core.base.OpenAIClient
+import shrimp.openai_core.base.OpenAIOption
 
 /**
  * Files API Service
@@ -24,8 +25,10 @@ class FileService(
     /**
      * GET /files. Async.
      */
-    fun getFileListAsync(): Mono<FileListResponse> {
-        return openAIClient()
+    fun getFileListAsync(
+        option: OpenAIOption? = null
+    ): Mono<FileListResponse> {
+        return openAIClient(option)
             .get()
             .uri("/files")
             .retrieve()
@@ -35,17 +38,20 @@ class FileService(
     /**
      * GET /files. Blocking.
      */
-    fun getFileList(): FileListResponse {
-        return getFileListAsync().block()!!
+    fun getFileList(
+        option: OpenAIOption? = null
+    ): FileListResponse {
+        return getFileListAsync(option).block()!!
     }
 
     /**
      * GET /files/{id}. Async.
      */
     fun getFileAsync(
-        id: String
+        id: String,
+        option: OpenAIOption? = null
     ): Mono<FileResponse> {
-        return openAIClient()
+        return openAIClient(option)
             .get()
             .uri("/files/$id")
             .retrieve()
@@ -56,18 +62,20 @@ class FileService(
      * GET /files/{id}. Blocking.
      */
     fun getFile(
-        id: String
+        id: String,
+        option: OpenAIOption? = null
     ): FileResponse {
-        return getFileAsync(id).block()!!
+        return getFileAsync(id, option).block()!!
     }
 
     /**
      * GET /files/{id}/content. Async.
      */
     fun getFileContentAsync(
-        id: String
+        id: String,
+        option: OpenAIOption? = null
     ): Mono<String> {
-        return openAIClient()
+        return openAIClient(option)
             .get()
             .uri("/files/$id/content")
             .retrieve()
@@ -78,18 +86,20 @@ class FileService(
      * GET /files/{id}/content. Blocking.
      */
     fun getFileContent(
-        id: String
+        id: String,
+        option: OpenAIOption? = null
     ): String {
-        return getFileContentAsync(id).block()!!
+        return getFileContentAsync(id, option).block()!!
     }
 
     /**
      * POST /files. Async.
      */
     fun postFileUploadAsync(
-        request: FileUploadRequest
+        request: FileUploadRequest,
+        option: OpenAIOption? = null
     ): Mono<FileResponse> {
-        return openAIClient()
+        return openAIClient(option)
             .post()
             .uri("/files")
             .contentType(MediaType.MULTIPART_FORM_DATA)
@@ -102,18 +112,20 @@ class FileService(
      * POST /files. Blocking.
      */
     fun postFileUpload(
-        request: FileUploadRequest
+        request: FileUploadRequest,
+        option: OpenAIOption? = null
     ): FileResponse {
-        return postFileUploadAsync(request).block()!!
+        return postFileUploadAsync(request, option).block()!!
     }
 
     /**
      * DELETE /files/{id}. Async.
      */
     fun deleteFileAsync(
-        id: String
+        id: String,
+        option: OpenAIOption? = null
     ): Mono<FileDeleteResponse> {
-        return openAIClient()
+        return openAIClient(option)
             .delete()
             .uri("/files/$id")
             .retrieve()
@@ -124,8 +136,9 @@ class FileService(
      * DELETE /files/{id}. Blocking.
      */
     fun deleteFile(
-        id: String
+        id: String,
+        option: OpenAIOption? = null
     ): FileDeleteResponse {
-        return deleteFileAsync(id).block()!!
+        return deleteFileAsync(id, option).block()!!
     }
 }

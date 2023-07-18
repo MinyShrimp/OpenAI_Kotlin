@@ -5,6 +5,7 @@ import reactor.core.publisher.Mono
 import shrimp.openai_core.api.model.response.ModelListResponse
 import shrimp.openai_core.api.model.response.ModelResponse
 import shrimp.openai_core.base.OpenAIClient
+import shrimp.openai_core.base.OpenAIOption
 
 /**
  * Models API Service
@@ -22,8 +23,10 @@ class ModelService(
     /**
      * GET /models. Async.
      */
-    fun getModelListAsync(): Mono<ModelListResponse> {
-        return openAIClient()
+    fun getModelListAsync(
+        option: OpenAIOption? = null
+    ): Mono<ModelListResponse> {
+        return openAIClient(option)
             .get()
             .uri("/models")
             .retrieve()
@@ -33,17 +36,20 @@ class ModelService(
     /**
      * GET /models. Block.
      */
-    fun getModelList(): ModelListResponse {
-        return getModelListAsync().block()!!
+    fun getModelList(
+        option: OpenAIOption? = null
+    ): ModelListResponse {
+        return getModelListAsync(option).block()!!
     }
 
     /**
      * GET /models/{model_name}. Async.
      */
     fun getModelAsync(
-        modelName: String
+        modelName: String,
+        option: OpenAIOption? = null
     ): Mono<ModelResponse> {
-        return openAIClient()
+        return openAIClient(option)
             .get()
             .uri("/models/$modelName")
             .retrieve()
@@ -54,8 +60,9 @@ class ModelService(
      * GET /models/{model_name}. Block.
      */
     fun getModel(
-        modelName: String
+        modelName: String,
+        option: OpenAIOption? = null
     ): ModelResponse {
-        return getModelAsync(modelName).block()!!
+        return getModelAsync(modelName, option).block()!!
     }
 }

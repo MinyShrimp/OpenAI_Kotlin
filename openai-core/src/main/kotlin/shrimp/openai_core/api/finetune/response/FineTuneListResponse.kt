@@ -9,7 +9,7 @@ import com.fasterxml.jackson.annotation.JsonProperty
  * @author 김회민
  * @since 2023-03-27
  */
-class FineTuneListResponse(
+data class FineTuneListResponse(
     val data: List<FineTuneResponse>? = null,
     @JsonProperty("object") val obj: String? = null,
 )

@@ -2,17 +2,17 @@ package shrimp.openai_core.api.moderation.response
 
 import com.fasterxml.jackson.annotation.JsonProperty
 
-class ModerationResponse(
+data class ModerationResponse(
     val id: String? = null,
     val model: String? = null,
     val results: List<Result>? = null,
 ) {
-    class Result(
+    data class Result(
         val categories: Categories? = null,
         val categoryScores: CategoryScores? = null,
         val flagged: Boolean? = null
     ) {
-        class Categories(
+        data class Categories(
             val hate: Boolean? = null,
             @JsonProperty("hate/threatening") val hateThreatening: Boolean? = null,
             @JsonProperty("self-harm") val selfHarm: Boolean? = null,
@@ -22,7 +22,7 @@ class ModerationResponse(
             @JsonProperty("violence/graphic") val violenceGraphic: Boolean? = null
         )
 
-        class CategoryScores(
+        data class CategoryScores(
             val hate: Double? = null,
             @JsonProperty("hate/threatening") val hateThreatening: Double? = null,
             @JsonProperty("self-harm") val selfHarm: Double? = null,
