@@ -4,22 +4,24 @@ import {JSX, useEffect, useRef, useState} from "react";
 import {Accordion, AccordionDetails, AccordionSummary, Box, Button, Container, Typography} from "@mui/material";
 
 import {PromptForm} from "./PromptForm";
+import {PromptSettingForm} from "./PromptSettingForm";
 import {defaultPrompt, IPrePrompt, PRE_PROMPT_TYPE, TransPrePromptType} from "./PrePromptTypes";
 
 import {useAppDispatch} from "../RootStore";
-import {IContext, IPrompt, PROMPT_ROLE} from "../states/context";
 import {setNowContextId} from "../states/now_context";
 import {RIGHT_STATE, setRightState} from "../states/right_state";
+import {IContext, IPrompt, ISetting, PROMPT_ROLE} from "../states/context";
 
 export function PromptElement(
     props: {
-        commitHandler: (prePromptList: IPrompt[]) => IContext,
+        commitHandler: (setting: ISetting, prePromptList: IPrompt[]) => IContext,
+        defaultSetting: ISetting,
         defaultPromptList: IPrePrompt[],
     }
 ): JSX.Element {
     const dispatch = useAppDispatch();
 
-    const promptIndex = useRef(props.defaultPromptList.length - 1);
+    const [setting, setSetting] = useState<ISetting>(props.defaultSetting);
     const [promptList, setPromptList] = useState<IPrePrompt[]>(props.defaultPromptList);
 
     const addButtonRef = useRef<HTMLButtonElement>(null);
@@ -27,21 +29,21 @@ export function PromptElement(
 
     const init = (): void => {
         if (props.defaultPromptList.length === 0) {
-            promptIndex.current = 0;
             setPromptList([{...defaultPrompt}]);
         } else {
-            promptIndex.current = props.defaultPromptList.length - 1;
             setPromptList(props.defaultPromptList);
         }
     }
     useEffect(init, [props.defaultPromptList]);
 
+    useEffect(() => {
+        setSetting(props.defaultSetting);
+    }, [props.defaultSetting])
+
     const addPrompt = (): void => {
-        promptIndex.current += 1;
         setPromptList((prevList) => {
             const newList = prevList.concat({
                 _id: uuidv4(),
-                index: promptIndex.current,
                 role: PROMPT_ROLE.ASSISTANT,
                 type: PRE_PROMPT_TYPE.USER,
                 content: "",
@@ -68,19 +70,13 @@ export function PromptElement(
     };
 
     const deletePrompt = (prompt: IPrePrompt): void => {
-        if (promptList.length === 1 || prompt.index === 0) {
+        if (promptList.length === 1) {
             return;
         }
 
         setPromptList(
-            promptList
-                .filter((item): boolean => item._id !== prompt._id)
-                .map((item, index) => {
-                    item.index = index;
-                    return item;
-                })
+            promptList.filter((item): boolean => item._id !== prompt._id)
         );
-        promptIndex.current = promptList.length - 2;
     };
 
     const commit = (): void => {
@@ -94,7 +90,7 @@ export function PromptElement(
                 }
             });
 
-        const context = props.commitHandler(prePromptList);
+        const context = props.commitHandler(setting, prePromptList);
         setNowContextId(dispatch, context.id);
         setRightState(dispatch, RIGHT_STATE.CHAT_COMPLETION);
     };
@@ -121,8 +117,21 @@ export function PromptElement(
                     overflowY: "auto",
                 }}
             >
-                <div style={{marginBottom: "1em"}}>{
-                    promptList.map((item) =>
+                <Box style={{marginBottom: "1em"}}>
+                    <Accordion defaultExpanded={true}>
+                        <AccordionSummary>
+                            <Typography>기본 설정</Typography>
+                        </AccordionSummary>
+                        <AccordionDetails>
+                            <PromptSettingForm
+                                setting={setting}
+                                setSetting={setSetting}
+                            />
+                        </AccordionDetails>
+                    </Accordion>
+                </Box>
+                <Box style={{marginBottom: "1em"}}>{
+                    promptList.map((item, index) =>
                         <Accordion key={item._id} defaultExpanded={true}>
                             <AccordionSummary>
                                 <Typography
@@ -136,15 +145,16 @@ export function PromptElement(
                             <AccordionDetails>
                                 <PromptForm
                                     item={item}
+                                    index={index}
                                     changeEvent={changePrompt}
                                     deleteEvent={deletePrompt}
-                                    ref={item.index === promptList.length - 1 ? lastPromptItem : undefined}
+                                    ref={index === promptList.length - 1 ? lastPromptItem : undefined}
                                 />
                             </AccordionDetails>
                         </Accordion>
                     )
-                }</div>
-                <div>
+                }</Box>
+                <Box>
                     <Button
                         variant="contained"
                         color="primary"
@@ -152,7 +162,7 @@ export function PromptElement(
                         style={{width: "100%"}}
                         ref={addButtonRef}
                     >+</Button>
-                </div>
+                </Box>
             </Box>
 
             <Box

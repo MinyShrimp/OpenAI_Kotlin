@@ -10,6 +10,7 @@ import {IPrePrompt, PRE_PROMPT_TYPE, TransPrePromptType} from "./PrePromptTypes"
 
 export const PromptForm = forwardRef((
     props: {
+        index: number,
         item: IPrePrompt,
         changeEvent: (_id: string, key: string, value: any) => void,
         deleteEvent: (prompt: IPrePrompt) => void
@@ -23,19 +24,20 @@ export const PromptForm = forwardRef((
     return (
         <Form style={{position: "relative"}}>
             <Row style={{marginBottom: "0.5em"}}>
-                <Form.Group as={Col} controlId={"name_" + props.item.index}>
+                <Form.Group as={Col} controlId={"name_" + props.index}>
                     <Form.Label>Type</Form.Label>
                     <Form.Select
                         name={"type"}
                         defaultValue={props.item.type}
                         onChange={onChangeEvent}
-                        disabled={props.item.index === 0 || props.item.disabled}
+                        disabled={props.index === 0 || props.item.disabled}
                     >
                         {
                             Object.values(PRE_PROMPT_TYPE)
                                 .map(
-                                    (value: string) => (
+                                    (value: string, index: number) => (
                                         <option
+                                            key={index}
                                             value={value}
                                             disabled={value === PRE_PROMPT_TYPE.SYSTEM}
                                         >
@@ -47,7 +49,7 @@ export const PromptForm = forwardRef((
                     </Form.Select>
                 </Form.Group>
             </Row>
-            <Form.Group controlId={"content_" + props.item.index}>
+            <Form.Group controlId={"content_" + props.index}>
                 <Form.Label>Content</Form.Label>
                 <Form.Control
                     as={TextareaAutosize} minRows={3} name={"content"}
@@ -66,7 +68,7 @@ export const PromptForm = forwardRef((
                     aria-label="disabled"
                     size={"small"}
                     color={props.item.disabled ? "error" : "primary"}
-                    disabled={props.item.index === 0}
+                    disabled={props.index === 0}
                     onClick={() => props.changeEvent(props.item._id, "disabled", !props.item.disabled)}
                 >
                     {
@@ -79,7 +81,7 @@ export const PromptForm = forwardRef((
                     aria-label={"delete"}
                     size={"medium"}
                     color={"error"}
-                    disabled={props.item.index === 0}
+                    disabled={props.index === 0}
                     onClick={() => props.deleteEvent(props.item)}
                 >
                     <DeleteOutlined fontSize="inherit"/>

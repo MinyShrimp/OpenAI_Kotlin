@@ -1,4 +1,4 @@
-export function request(
+export function requestStream(
     data: {
         url: string,
         method: string,

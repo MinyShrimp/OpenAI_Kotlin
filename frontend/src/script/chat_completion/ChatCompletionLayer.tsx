@@ -2,12 +2,14 @@ import {ChangeEvent, JSX, KeyboardEvent, useEffect, useState} from "react";
 import {Form} from "react-bootstrap";
 import {Box, Container, TextareaAutosize} from "@mui/material";
 
-import {request} from "../base/request";
-import {PromptBox} from "./PromptBox";
-import {CONTEXT_ACTION, IPrompt} from "../states/context";
+import {requestStream} from "../base/requestStream";
 
 import {useAppDispatch, useAppSelector} from "../RootStore";
+import {CHAT_MODEL, CONTEXT_ACTION, IPrompt} from "../states/context";
 import {ConvertPromptToRequest} from "../states/context/ContextUtils";
+
+import {PromptBox} from "./PromptBox";
+import {ChatCompletionRequestDto} from "./ChatCompletionRequestDto";
 
 export function ChatCompletionLayer(): JSX.Element {
     const [message, setMessage] = useState<string>("");
@@ -25,19 +27,25 @@ export function ChatCompletionLayer(): JSX.Element {
 
     const getContext = () => contextState.contexts.find(context => context.id === nowContextState.id);
 
-    const getRequestPromptList = (
+    const getRequest = (
         newPrompt: IPrompt
-    ): IPrompt[] => {
+    ): ChatCompletionRequestDto => {
         const context = getContext();
         if (context === undefined) {
-            return [newPrompt];
+            return {
+                model: CHAT_MODEL.GPT_3_5,
+                messages: [newPrompt]
+            }
         }
 
-        return [
-            ...context.prePrompt.map(ConvertPromptToRequest),
-            ...context.history.map(ConvertPromptToRequest),
-            newPrompt
-        ];
+        return {
+            model: context.setting.model,
+            messages: [
+                ...context.prePrompt.map(ConvertPromptToRequest),
+                ...context.history.map(ConvertPromptToRequest),
+                newPrompt
+            ],
+        };
     }
 
     const addHistory = (history: IPrompt): void => {
@@ -69,25 +77,23 @@ export function ChatCompletionLayer(): JSX.Element {
         setRespMsg("");
         setMessage("");
         setPending(true);
-        addHistory({
-            role: "assistant",
-            name: "user",
-            content: message
-        });
         const url = "http://localhost:8080/api/chat/stream";
         const reqHeader = {
             Authorization: "Bearer " + (localStorage.getItem("openAiKey") ?? ""),
             "Content-Type": "application/json; charset=utf-8;"
         }
-        const reqBody = {
-            model: "gpt-3.5-turbo",
-            messages: getRequestPromptList({
-                role: "user",
-                content: message
-            })
-        };
+        const reqBody = getRequest({
+            role: "user",
+            content: message
+        });
 
-        request({
+        addHistory({
+            role: "assistant",
+            name: "user",
+            content: message
+        });
+
+        requestStream({
             url,
             method: "POST",
             headers: reqHeader,

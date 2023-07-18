@@ -1,5 +1,5 @@
 import {v4 as uuidv4} from "uuid";
-import {IPrompt, PROMPT_NAME, PROMPT_ROLE} from "../states/context";
+import {CHAT_MODEL, IPrompt, ISetting, PROMPT_NAME, PROMPT_ROLE} from "../states/context";
 
 export const PRE_PROMPT_TYPE = {
     SYSTEM: "system",
@@ -24,16 +24,20 @@ export const TransPrePromptType = (
 
 export interface IPrePrompt extends IPrompt {
     _id: string,
-    index: number,
     type: PRE_PROMPT_TYPE,
     disabled: boolean,
 }
 
+export const defaultContextSetting: ISetting = {
+    title: "",
+    model: CHAT_MODEL.GPT_3_5,
+    description: ""
+}
+
 export const defaultPrompt: IPrePrompt = {
-    _id: uuidv4(), index: 0,
+    _id: uuidv4(),
     role: PROMPT_ROLE.SYSTEM,
     content: "",
-    name: undefined,
     type: PRE_PROMPT_TYPE.SYSTEM,
     disabled: false
 };

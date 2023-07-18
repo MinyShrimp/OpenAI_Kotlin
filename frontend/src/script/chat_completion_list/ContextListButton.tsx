@@ -44,8 +44,19 @@ export function ContextListButton(
             }}
             onClick={selectEventHandler}
         >
-            <ListItemText primary={props.context.title}/>
-            <div style={{position: "relative", left: "8px"}}>
+            <ListItemText
+                style={{overflow: "hidden"}}
+                primary={
+                    props.context.setting.title
+                }
+            />
+            <div
+                style={{
+                    left: "8px",
+                    position: "relative",
+                    minWidth: "61px"
+                }}
+            >
                 <IconButton onClick={fixEventHandler}>
                     <FontAwesomeIcon
                         icon={faWrench}

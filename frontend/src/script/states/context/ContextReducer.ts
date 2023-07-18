@@ -14,15 +14,21 @@ export const ContextReducer = (
                 ]
             };
         case CONTEXT_ACTION.CHANGE_CONTEXT: {
-            const {id, title, prePrompt} = action.payload;
+            const {id, setting, prePrompt} = action.payload;
             const updatedContexts = state.contexts.map(
                 (context) => context.id === id
-                    ? {...context, title, prePrompt: [...prePrompt]}
+                    ? {
+                        ...context,
+                        setting: {
+                            ...setting,
+                            description: !setting.description ? undefined : setting.description
+                        },
+                        prePrompt: [...prePrompt]
+                    }
                     : context
             );
             return {contexts: updatedContexts};
         }
-
         case CONTEXT_ACTION.DELETE_CONTEXT:
             const newContexts = state.contexts.filter((value) => value.id !== action.payload.id);
             return {contexts: [...newContexts]};
