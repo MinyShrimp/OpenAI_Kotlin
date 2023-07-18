@@ -6,14 +6,23 @@ export const CONTEXT_ACTION = {
 } as const;
 export type CONTEXT_ACTION = typeof CONTEXT_ACTION[keyof typeof CONTEXT_ACTION];
 
-export interface IPrompt {
-    role: "system" | "assistant" | "user";
-    name?: string;
-    content: string;
-}
+export const PROMPT_ROLE = {
+    USER: "user",
+    SYSTEM: "system",
+    ASSISTANT: "assistant"
+} as const;
+export type PROMPT_ROLE = typeof PROMPT_ROLE[keyof typeof PROMPT_ROLE];
 
-export interface IHistoryDto extends IPrompt {
-    id: string;
+export const PROMPT_NAME = {
+    USER: "user",
+    AI: "ai",
+} as const;
+export type PROMPT_NAME = typeof PROMPT_NAME[keyof typeof PROMPT_NAME];
+
+export interface IPrompt {
+    role: PROMPT_ROLE;
+    name?: PROMPT_NAME;
+    content: string;
 }
 
 export interface IContext {

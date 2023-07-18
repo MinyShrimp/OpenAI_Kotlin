@@ -1,21 +1,20 @@
 import {v4 as uuidv4} from "uuid";
 
-import {JSX} from "react";
+import {JSX, useEffect} from "react";
 
 import {useAppDispatch} from "../RootStore";
 import {CONTEXT_ACTION, IContext, IPrompt} from "../states/context";
 
-import {IPrePrompt} from "./IPrePrompt";
+import {defaultPrompt} from "./PrePromptTypes";
 import {PromptElement} from "./PromptElement";
+import {setNowContextId} from "../states/now_context";
 
 export function PromptCreateLayer(): JSX.Element {
     const dispatch = useAppDispatch();
 
-    const defaultPromptList: IPrePrompt[] = [{
-        _id: uuidv4(), index: 0,
-        role: "system", content: "", name: "",
-        disabled: false
-    }];
+    useEffect(() => {
+        setNowContextId(dispatch, "");
+    }, []);
 
     const commitHandler = (
         prePromptList: IPrompt[]
@@ -36,7 +35,7 @@ export function PromptCreateLayer(): JSX.Element {
 
     return (
         <PromptElement
-            defaultPromptList={defaultPromptList}
+            defaultPromptList={[{...defaultPrompt}]}
             commitHandler={commitHandler}
         />
     );

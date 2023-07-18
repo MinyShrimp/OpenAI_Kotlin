@@ -4,7 +4,7 @@ import {JSX, useEffect, useState} from "react";
 
 import {useAppDispatch, useAppSelector} from "../RootStore";
 import {CONTEXT_ACTION, IContext, IPrompt} from "../states/context";
-import {IPrePrompt} from "./IPrePrompt";
+import {IPrePrompt, PRE_PROMPT_TYPE} from "./PrePromptTypes";
 import {PromptElement} from "./PromptElement";
 import {RIGHT_STATE, setRightState} from "../states/right_state";
 
@@ -27,9 +27,9 @@ export function PromptChangeLayer(): JSX.Element {
                 return {
                     _id: uuidv4(),
                     index: index,
-                    role: prePrompt.role as "system" | "assistant",
+                    role: prePrompt.role,
+                    type: prePrompt.name ?? PRE_PROMPT_TYPE.SYSTEM,
                     content: prePrompt.content,
-                    name: prePrompt.name ?? "",
                     disabled: false
                 };
             });

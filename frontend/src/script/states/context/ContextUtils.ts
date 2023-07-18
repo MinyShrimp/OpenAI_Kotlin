@@ -1,15 +1,5 @@
 import {IPrompt} from "./ContextTypes";
 
-export const ConvertHistoryViewToDto = (
-    prompt: IPrompt
-): IPrompt => {
-    return {
-        role: "assistant",
-        name: prompt.role,
-        content: prompt.content,
-    };
-}
-
 export const ConvertPromptToRequest = (
     prompt: IPrompt
 ): IPrompt => {

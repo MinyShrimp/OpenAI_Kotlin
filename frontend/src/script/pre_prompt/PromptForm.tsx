@@ -1,4 +1,4 @@
-import React, {forwardRef} from "react";
+import {ChangeEvent, ForwardedRef, forwardRef} from "react";
 import {ButtonGroup, Col, Form, Row} from "react-bootstrap";
 
 import {DeleteOutlined} from "@mui/icons-material";
@@ -6,43 +6,45 @@ import {IconButton, TextareaAutosize} from "@mui/material";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faEye, faEyeSlash} from "@fortawesome/free-solid-svg-icons";
 
-import {IPrePrompt} from "./IPrePrompt";
+import {IPrePrompt, PRE_PROMPT_TYPE, TransPrePromptType} from "./PrePromptTypes";
 
 export const PromptForm = forwardRef((
     props: {
         item: IPrePrompt,
-        changeEvent: (_id: string, key: string, value: string | boolean) => void,
+        changeEvent: (_id: string, key: string, value: any) => void,
         deleteEvent: (prompt: IPrePrompt) => void
     },
-    ref: React.ForwardedRef<HTMLTextAreaElement> | undefined
+    ref: ForwardedRef<HTMLTextAreaElement> | undefined
 ) => {
-    const onChangeEvent = (event: React.ChangeEvent<any>): void => {
+    const onChangeEvent = (event: ChangeEvent<any>): void => {
         props.changeEvent(props.item._id, event.target.name, event.target.value);
     }
 
     return (
         <Form style={{position: "relative"}}>
             <Row style={{marginBottom: "0.5em"}}>
-                <Form.Group as={Col} controlId={"role_" + props.item.index}>
-                    <Form.Label>Role</Form.Label>
+                <Form.Group as={Col} controlId={"name_" + props.item.index}>
+                    <Form.Label>Type</Form.Label>
                     <Form.Select
-                        name={"role"}
-                        defaultValue={props.item.role}
+                        name={"type"}
+                        defaultValue={props.item.type}
                         onChange={onChangeEvent}
                         disabled={props.item.index === 0 || props.item.disabled}
                     >
-                        <option value={"system"}>System</option>
-                        <option value={"assistant"}>Assistant</option>
+                        {
+                            Object.values(PRE_PROMPT_TYPE)
+                                .map(
+                                    (value: string) => (
+                                        <option
+                                            value={value}
+                                            disabled={value === PRE_PROMPT_TYPE.SYSTEM}
+                                        >
+                                            {TransPrePromptType(value as PRE_PROMPT_TYPE)}
+                                        </option>
+                                    )
+                                )
+                        }
                     </Form.Select>
-                </Form.Group>
-                <Form.Group as={Col} controlId={"name_" + props.item.index}>
-                    <Form.Label>Name (Optional)</Form.Label>
-                    <Form.Control
-                        type={"text"} placeholder={"Optional"} name={"name"}
-                        defaultValue={props.item.name}
-                        onChange={onChangeEvent}
-                        disabled={props.item.disabled}
-                    />
                 </Form.Group>
             </Row>
             <Form.Group controlId={"content_" + props.item.index}>

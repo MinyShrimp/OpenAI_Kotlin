@@ -4,10 +4,10 @@ import {JSX, useEffect, useRef, useState} from "react";
 import {Accordion, AccordionDetails, AccordionSummary, Box, Button, Container, Typography} from "@mui/material";
 
 import {PromptForm} from "./PromptForm";
-import {IPrePrompt} from "./IPrePrompt";
+import {defaultPrompt, IPrePrompt, PRE_PROMPT_TYPE, TransPrePromptType} from "./PrePromptTypes";
 
 import {useAppDispatch} from "../RootStore";
-import {IContext, IPrompt} from "../states/context";
+import {IContext, IPrompt, PROMPT_ROLE} from "../states/context";
 import {setNowContextId} from "../states/now_context";
 import {RIGHT_STATE, setRightState} from "../states/right_state";
 
@@ -22,12 +22,17 @@ export function PromptElement(
     const promptIndex = useRef(props.defaultPromptList.length - 1);
     const [promptList, setPromptList] = useState<IPrePrompt[]>(props.defaultPromptList);
 
-    const lastPromptItem = useRef<HTMLTextAreaElement>(null);
     const addButtonRef = useRef<HTMLButtonElement>(null);
+    const lastPromptItem = useRef<HTMLTextAreaElement>(null);
 
     const init = (): void => {
-        promptIndex.current = props.defaultPromptList.length - 1;
-        setPromptList(props.defaultPromptList);
+        if (props.defaultPromptList.length === 0) {
+            promptIndex.current = 0;
+            setPromptList([{...defaultPrompt}]);
+        } else {
+            promptIndex.current = props.defaultPromptList.length - 1;
+            setPromptList(props.defaultPromptList);
+        }
     }
     useEffect(init, [props.defaultPromptList]);
 
@@ -35,8 +40,11 @@ export function PromptElement(
         promptIndex.current += 1;
         setPromptList((prevList) => {
             const newList = prevList.concat({
-                _id: uuidv4(), index: promptIndex.current,
-                role: "assistant", content: "", name: "",
+                _id: uuidv4(),
+                index: promptIndex.current,
+                role: PROMPT_ROLE.ASSISTANT,
+                type: PRE_PROMPT_TYPE.USER,
+                content: "",
                 disabled: false
             });
 
@@ -48,12 +56,13 @@ export function PromptElement(
         });
     };
 
-    const changePrompt = (_id: string, key: string, value: string | boolean): void => {
+    const changePrompt = (_id: string, key: string, value: any): void => {
         const findIndex = promptList.findIndex((item): boolean => item._id === _id);
         if (findIndex === -1) {
             return;
         }
 
+        // @ts-ignore
         promptList[findIndex][key] = value;
         setPromptList([...promptList]);
     };
@@ -80,8 +89,8 @@ export function PromptElement(
             .map((prompt) => {
                 return {
                     role: prompt.role,
-                    name: prompt.name,
                     content: prompt.content,
+                    name: prompt.type === PRE_PROMPT_TYPE.SYSTEM ? undefined : prompt.type,
                 }
             });
 
@@ -121,7 +130,7 @@ export function PromptElement(
                                         textDecoration: item.disabled ? "line-through" : "none",
                                     }}
                                 >
-                                    Role #{item.index} - {item.role}
+                                    {TransPrePromptType(item.type)}
                                 </Typography>
                             </AccordionSummary>
                             <AccordionDetails>
