@@ -19,10 +19,7 @@ export const ContextReducer = (
                 (context) => context.id === id
                     ? {
                         ...context,
-                        setting: {
-                            ...setting,
-                            description: !setting.description ? undefined : setting.description
-                        },
+                        setting: {...setting},
                         prePrompt: [...prePrompt]
                     }
                     : context

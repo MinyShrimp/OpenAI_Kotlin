@@ -1,11 +1,14 @@
 import * as path from "path";
-import {defineConfig} from "vite";
+import {defineConfig, loadEnv} from "vite";
 import react from "@vitejs/plugin-react";
 
+const mode = "development"; // "development" | "production"
+
 export default defineConfig({
-    mode: "development", // "development" | "production"
+    mode: mode,
     root: path.resolve(__dirname, "src"),
     publicDir: path.resolve(__dirname, "public"),
+    envDir: path.resolve(__dirname, "envs"),
     build: {
         outDir: path.resolve(__dirname, "dist"),
     },
@@ -18,4 +21,10 @@ export default defineConfig({
     server: {
         port: 3000,
     },
+    define: {
+        __APP_ENV__: JSON.stringify(
+            loadEnv(mode, path.resolve(__dirname, "envs"), "")
+        ),
+        "process.env": process.env
+    }
 });

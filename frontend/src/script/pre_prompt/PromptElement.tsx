@@ -80,6 +80,12 @@ export function PromptElement(
     };
 
     const commit = (): void => {
+        const _setting: ISetting = {
+            model: setting.model,
+            title: !setting.title ? "New Prompt" : setting.title,
+            description: !setting.description ? undefined : setting.description
+        }
+
         const prePromptList: IPrompt[] = promptList
             .filter((item) => !item.disabled && item.content)
             .map((prompt) => {
@@ -90,7 +96,7 @@ export function PromptElement(
                 }
             });
 
-        const context = props.commitHandler(setting, prePromptList);
+        const context = props.commitHandler(_setting, prePromptList);
         setNowContextId(dispatch, context.id);
         setRightState(dispatch, RIGHT_STATE.CHAT_COMPLETION);
     };

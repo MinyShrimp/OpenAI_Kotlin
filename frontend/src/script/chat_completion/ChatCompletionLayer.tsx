@@ -77,7 +77,8 @@ export function ChatCompletionLayer(): JSX.Element {
         setRespMsg("");
         setMessage("");
         setPending(true);
-        const url = "http://localhost:8080/api/chat/stream";
+
+        const url = import.meta.env.VITE_BACKEND_API_URL + "/chat/stream";
         const reqHeader = {
             Authorization: "Bearer " + (localStorage.getItem("openAiKey") ?? ""),
             "Content-Type": "application/json; charset=utf-8;"
@@ -169,7 +170,9 @@ export function ChatCompletionLayer(): JSX.Element {
                         padding: "0.75rem",
                         minHeight: "24px"
                     }}
-                    disabled={pending}
+                    disabled={
+                        pending || nowContextState.id === ""
+                    }
                 />
             </Form>
         </Box>
