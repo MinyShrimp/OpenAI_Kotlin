@@ -1,22 +1,62 @@
-import {ChangeEvent, JSX, KeyboardEvent, useState} from "react";
+import {ChangeEvent, JSX, KeyboardEvent, useEffect, useState} from "react";
 import {Form} from "react-bootstrap";
 import {Box, Container, TextareaAutosize} from "@mui/material";
 
 import {request} from "../base/request";
 import {PromptBox} from "./PromptBox";
-import {IPrompt} from "../states/context";
+import {CONTEXT_ACTION, IPrompt} from "../states/context";
+
+import {useAppDispatch, useAppSelector} from "../RootStore";
+import {ConvertPromptToRequest} from "../states/context/ContextUtils";
 
 export function ChatCompletionLayer(): JSX.Element {
     const [message, setMessage] = useState<string>("");
-    const [history, setHistory] = useState<IPrompt[]>([]);
+    const [historis, setHistoris] = useState<IPrompt[]>([]);
     const [respMsg, setRespMsg] = useState<string>("");
     const [pending, setPending] = useState<boolean>(false);
 
-    const addHistory = ({role, content}: IPrompt): void => {
-        setHistory(prevHistory => [...prevHistory, {
-            role: role,
-            content: content
-        }]);
+    const dispatch = useAppDispatch();
+    const contextState = useAppSelector(state => state.contextReducer);
+    const nowContextState = useAppSelector(state => state.nowContextReducer);
+
+    useEffect(() => {
+        setHistoris(getContext()?.history ?? []);
+    }, [nowContextState]);
+    
+    useEffect(() => {
+        if (historis.length === 0 || historis.length === getContext()?.history.length) {
+            return;
+        }
+
+        const history = historis[historis.length - 1];
+        dispatch({
+            type: CONTEXT_ACTION.ADD_HISTORY,
+            payload: {
+                id: nowContextState.id,
+                history: [history]
+            }
+        });
+    }, [historis]);
+
+    const getContext = () => contextState.contexts.find(context => context.id === nowContextState.id);
+
+    const getRequestPromptList = (
+        newPrompt: IPrompt
+    ): IPrompt[] => {
+        const context = getContext();
+        if (context === undefined) {
+            return [newPrompt];
+        }
+
+        return [
+            ...context.prePrompt.map(ConvertPromptToRequest),
+            ...context.history.map(ConvertPromptToRequest),
+            newPrompt
+        ];
+    }
+
+    const addHistory = (history: IPrompt): void => {
+        setHistoris(prevHistory => [...prevHistory, history]);
     }
 
     const onKeyDown = (e: KeyboardEvent<HTMLFormElement>): void => {
@@ -35,23 +75,25 @@ export function ChatCompletionLayer(): JSX.Element {
             return;
         }
 
-        const prompt: IPrompt = {
-            role: "user",
-            content: message
-        }
-
         setRespMsg("");
         setMessage("");
         setPending(true);
-        addHistory(prompt);
+        addHistory({
+            role: "assistant",
+            name: "user",
+            content: message
+        });
         const url = "http://localhost:8080/api/chat/stream";
         const reqHeader = {
             Authorization: "Bearer " + (localStorage.getItem("openAiKey") ?? ""),
             "Content-Type": "application/json; charset=utf-8;"
         }
         const reqBody = {
-            model: "gpt-4",
-            messages: [...history, prompt]
+            model: "gpt-3.5-turbo",
+            messages: getRequestPromptList({
+                role: "user",
+                content: message
+            })
         };
 
         request({
@@ -63,10 +105,14 @@ export function ChatCompletionLayer(): JSX.Element {
             setRespMsg(prevRespMsg => prevRespMsg + chunk);
             return chunk;
         }).then((result) => {
-            addHistory({
-                role: "assistant",
-                content: result
-            });
+            if (result !== undefined) {
+                addHistory({
+                    role: "assistant",
+                    name: "ai",
+                    content: result
+                });
+            }
+
             setRespMsg("");
             setPending(false);
         });
@@ -89,7 +135,14 @@ export function ChatCompletionLayer(): JSX.Element {
                     overflowY: "auto"
                 }}
             >
-                {history.map((item, index) => <PromptBox role={item.role} content={item.content} key={index}/>)}
+                {historis.map(
+                    (item, index) => <PromptBox
+                        role={item.role}
+                        name={item.name}
+                        content={item.content}
+                        key={index}
+                    />
+                )}
                 {
                     !respMsg
                         ? null

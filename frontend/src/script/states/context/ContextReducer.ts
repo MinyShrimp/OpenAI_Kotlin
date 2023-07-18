@@ -13,7 +13,7 @@ export const ContextReducer = (
                     action.payload
                 ]
             };
-        case CONTEXT_ACTION.CHANGE_CONTEXT:
+        case CONTEXT_ACTION.CHANGE_CONTEXT: {
             const {id, title, prePrompt} = action.payload;
             const updatedContexts = state.contexts.map(
                 (context) => context.id === id
@@ -21,9 +21,20 @@ export const ContextReducer = (
                     : context
             );
             return {contexts: updatedContexts};
+        }
+
         case CONTEXT_ACTION.DELETE_CONTEXT:
             const newContexts = state.contexts.filter((value) => value.id !== action.payload.id);
             return {contexts: [...newContexts]};
+        case CONTEXT_ACTION.ADD_HISTORY: {
+            const {id, history} = action.payload;
+            const updatedContexts = state.contexts.map(
+                (context) => context.id === id
+                    ? {...context, history: [...context.history, history[0]]}
+                    : context
+            );
+            return {contexts: updatedContexts};
+        }
         default:
             return state;
     }
