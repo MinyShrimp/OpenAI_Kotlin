@@ -1,0 +1,17 @@
+version: '3'
+services:
+  mysql:
+    image: mysql
+    container_name: openai_helper_mysql
+    ports:
+      - "3306:3306"
+    env_file:
+      - ./config/.env
+    environment:
+      TZ: Asia/Seoul
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+    volumes:
+      - ./db/mysql:/var/lib/mysql
+    restart: always

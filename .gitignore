@@ -7,6 +7,8 @@ build/
 
 *Example.*
 .env*
+db/mysql/
+*.properties
 
 ### STS ###
 .apt_generated

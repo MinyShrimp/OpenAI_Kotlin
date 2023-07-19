@@ -11,7 +11,9 @@ pluginManagement {
             when (requested.id.id) {
                 "org.springframework.boot" -> useVersion(springBootVersion)
                 "io.spring.dependency-management" -> useVersion(springDependencyManagementVersion)
-                "org.jetbrains.kotlin.jvm", "org.jetbrains.kotlin.plugin.spring" -> useVersion(kotlinVersion)
+                "org.jetbrains.kotlin.jvm",
+                "org.jetbrains.kotlin.plugin.spring",
+                "org.jetbrains.kotlin.plugin.jpa" -> useVersion(kotlinVersion)
             }
         }
     }

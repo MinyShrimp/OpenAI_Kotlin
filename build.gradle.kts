@@ -5,6 +5,7 @@ plugins {
     id("io.spring.dependency-management") apply false
 
     kotlin("jvm") apply false
+    kotlin("plugin.jpa") apply false
     kotlin("plugin.spring") apply false
 }
 
