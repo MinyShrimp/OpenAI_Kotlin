@@ -25,7 +25,4 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     runtimeOnly("com.mysql:mysql-connector-j:8.0.33")
     testRuntimeOnly("com.h2database:h2:2.2.220")
-
-    // other
-    implementation("com.knuddels:jtokkit:0.6.1")
 }

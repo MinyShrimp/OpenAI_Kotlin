@@ -16,6 +16,9 @@ dependencies {
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("org.springframework.boot:spring-boot-starter-webflux")
 
+    // other
+    implementation("com.knuddels:jtokkit:0.6.1")
+
     // Test
     testImplementation("io.mockk:mockk:1.13.4")
     testImplementation("io.projectreactor:reactor-test")

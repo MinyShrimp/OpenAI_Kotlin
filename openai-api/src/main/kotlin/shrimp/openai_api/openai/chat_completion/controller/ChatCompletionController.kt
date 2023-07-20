@@ -2,7 +2,6 @@ package shrimp.openai_api.openai.chat_completion.controller
 
 import mu.KotlinLogging
 import org.springframework.web.bind.annotation.*
-import org.springframework.web.reactive.function.client.WebClientResponseException
 import reactor.core.publisher.Flux
 import shrimp.openai_api.openai.chat_completion.dto.ChatCompletionDTO
 import shrimp.openai_core.api.completion.service.CompletionService
@@ -24,17 +23,13 @@ class ChatCompletionController(
         @RequestHeader("Authorization") auth: String,
         @RequestBody body: ChatCompletionDTO
     ): Flux<String> {
-        try {
-            val resp = completionService.postChatCompletionStream(
-                body.convert(true),
-                OpenAIOption(auth.replace("Bearer ", ""))
-            )
-            return resp.map {
-                it.choices?.first()?.delta?.content ?: ""
-            }
-        } catch (e: WebClientResponseException.BadRequest) {
-            logger.error { e.responseBodyAsString }
-            throw e
+        val resp = completionService.postChatCompletionStream(
+            body.convert(true),
+            OpenAIOption(auth.replace("Bearer ", ""))
+        )
+        
+        return resp.map {
+            it.choices?.first()?.delta?.content ?: ""
         }
     }
 }
