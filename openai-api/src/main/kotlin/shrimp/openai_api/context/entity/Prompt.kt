@@ -21,7 +21,10 @@ class Prompt(
     @Column
     var content: String,
 
+    @Column(name = "ordering")
+    var order: Int,
+
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "context_id")
-    var context: Context
+    var context: Context?
 )

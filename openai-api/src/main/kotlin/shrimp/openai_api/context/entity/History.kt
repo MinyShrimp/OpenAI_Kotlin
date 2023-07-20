@@ -28,7 +28,7 @@ class History(
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "context_id")
-    var context: Context
+    var context: Context?
 ) {
     @CreatedDate
     lateinit var createAt: LocalDateTime

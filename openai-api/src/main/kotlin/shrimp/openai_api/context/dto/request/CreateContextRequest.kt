@@ -1,4 +1,4 @@
-package shrimp.openai_api.context.dto
+package shrimp.openai_api.context.dto.request
 
 import com.fasterxml.jackson.annotation.JsonProperty
 import shrimp.openai_api.context.entity.Context
@@ -7,26 +7,28 @@ import shrimp.openai_api.context.types.Name
 import shrimp.openai_api.context.types.Role
 import java.util.*
 
-class ContextCreateDTO(
+data class CreateContextRequest(
     val id: UUID,
     val title: String,
     val description: String,
     @JsonProperty("pre_prompt_list")
     val prePromptList: List<PrePromptDTO>,
 ) {
-    class PrePromptDTO(
-        val role: String,
-        val name: String?,
+    data class PrePromptDTO(
+        val role: Role,
+        val name: Name?,
         val content: String,
     ) {
         fun convertEntity(
-            context: Context
+            order: Int,
+            context: Context,
         ): Prompt {
             return Prompt(
-                role = enumValueOf<Role>(this.role),
-                name = if (this.name != null) enumValueOf<Name>(this.name) else Name.SYSTEM,
+                role = this.role,
+                name = this.name ?: Name.SYSTEM,
                 content = this.content,
-                context = context
+                context = context,
+                order = order
             )
         }
     }
