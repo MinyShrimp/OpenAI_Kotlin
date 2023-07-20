@@ -6,6 +6,8 @@ export const ContextReducer = (
     action: PayloadAction<IContext, CONTEXT_ACTION>
 ): IContextState => {
     switch (action.type) {
+        case CONTEXT_ACTION.INIT_CONTEXT:
+            return {contexts: []}
         case CONTEXT_ACTION.ADD_CONTEXT:
             return {
                 contexts: [

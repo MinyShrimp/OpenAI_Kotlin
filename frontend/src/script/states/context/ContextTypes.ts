@@ -1,5 +1,6 @@
 export const CONTEXT_ACTION = {
     ADD_CONTEXT: "context/add",
+    INIT_CONTEXT: "context/init",
     CHANGE_CONTEXT: "context/change",
     DELETE_CONTEXT: "context/delete",
     ADD_HISTORY: "context/history/add",

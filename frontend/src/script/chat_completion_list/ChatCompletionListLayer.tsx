@@ -1,4 +1,4 @@
-import {JSX} from "react";
+import {JSX, useEffect} from "react";
 import {List, ListItemButton, Slide} from "@mui/material";
 
 import {faPlus} from "@fortawesome/free-solid-svg-icons";
@@ -10,11 +10,38 @@ import {RIGHT_STATE, setRightState} from "../states/right_state";
 
 import {ContextListHeader} from "./ContextListHeader";
 import {ContextListButton} from "./ContextListButton";
+import {axiosClient} from "../base/request";
+import {CONTEXT_ACTION} from "../states/context";
 
 export function ChatCompletionListLayer(): JSX.Element {
     const dispatch = useAppDispatch();
     const leftState = useAppSelector((selector) => selector.leftStateReducer);
     const contextState = useAppSelector((selector) => selector.contextReducer);
+
+    useEffect(() => {
+        axiosClient.get(
+            "/context", {}
+        ).then((response) => {
+            dispatch({
+                type: CONTEXT_ACTION.INIT_CONTEXT
+            });
+            response.data.forEach((context: any) => {
+                dispatch({
+                    type: CONTEXT_ACTION.ADD_CONTEXT,
+                    payload: {
+                        id: context.id,
+                        setting: {
+                            title: context.title,
+                            model: context.model,
+                            description: context.description,
+                        },
+                        prePrompt: [],
+                        history: []
+                    }
+                });
+            })
+        })
+    }, [])
 
     return (
         <Slide

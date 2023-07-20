@@ -10,6 +10,7 @@ import {ConvertPromptToRequest} from "../states/context/ContextUtils";
 
 import {PromptBox} from "./PromptBox";
 import {ChatCompletionRequestDto} from "./ChatCompletionRequestDto";
+import {axiosClient} from "../base/request";
 
 export function ChatCompletionLayer(): JSX.Element {
     const [message, setMessage] = useState<string>("");
@@ -49,13 +50,29 @@ export function ChatCompletionLayer(): JSX.Element {
     }
 
     const addHistory = (history: IPrompt): void => {
-        dispatch({
-            type: CONTEXT_ACTION.ADD_HISTORY,
-            payload: {
+        axiosClient.post(
+            "/context",
+            {
                 id: nowContextState.id,
-                history: [history]
+                role: history.role,
+                name: history.name,
+                content: history.content
             }
-        });
+        ).then((response) => {
+            dispatch({
+                type: CONTEXT_ACTION.ADD_HISTORY,
+                payload: {
+                    id: nowContextState.id,
+                    history: [
+                        {
+                            role: response.data.role,
+                            name: response.data.name,
+                            content: response.data.content
+                        }
+                    ]
+                }
+            });
+        })
     }
 
     const onKeyDown = (e: KeyboardEvent<HTMLFormElement>): void => {

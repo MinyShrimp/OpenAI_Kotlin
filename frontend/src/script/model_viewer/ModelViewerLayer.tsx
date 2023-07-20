@@ -3,25 +3,23 @@ import {JSX, useEffect, useState} from "react";
 import {Grid} from "@mui/material";
 import {DataGrid} from '@mui/x-data-grid';
 
+import {axiosClient} from "../base/request";
+
 export function ModelViewerLayer(): JSX.Element {
     // const [pending, setPending] = useState<boolean>(false);
     const [models, setModels] = useState<any[]>([]);
 
     useEffect(() => {
-        fetch(
-            import.meta.env.VITE_BACKEND_API_URL + "/model/list",
+        axiosClient.get(
+            "/model/list",
             {
-                method: "GET",
                 headers: {
-                    Authorization: "Bearer " + (localStorage.getItem("openAiKey") ?? ""),
-                    "Content-Type": "application/json; charset=utf-8;"
+                    Authorization: "Bearer " + (localStorage.getItem("openAiKey") ?? "")
                 }
             }
         ).then(
-            (response) => response.json()
-        ).then((data) => {
-            setModels(data);
-        }).finally(() => {
+            (response) => setModels(response.data)
+        ).finally(() => {
             // setPending(true);
         });
     }, []);
