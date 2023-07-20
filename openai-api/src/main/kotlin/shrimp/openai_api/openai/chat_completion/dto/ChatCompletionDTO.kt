@@ -1,4 +1,4 @@
-package shrimp.openai_api.chat_completion.dto
+package shrimp.openai_api.openai.chat_completion.dto
 
 import shrimp.openai_core.api.completion.entity.Role
 import shrimp.openai_core.api.completion.request.ChatCompletionRequest

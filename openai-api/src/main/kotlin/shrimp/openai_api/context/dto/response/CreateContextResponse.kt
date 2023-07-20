@@ -6,8 +6,9 @@ import java.util.*
 
 data class CreateContextResponse(
     val id: UUID,
+    val model: String,
     val title: String,
-    val description: String,
+    val description: String?,
     val updateAt: LocalDateTime,
     val prePromptList: List<GetPromptResponse>
 ) {
@@ -17,6 +18,7 @@ data class CreateContextResponse(
         ): CreateContextResponse {
             return CreateContextResponse(
                 id = context.id,
+                model = context.model,
                 title = context.title,
                 description = context.description,
                 updateAt = context.updateAt,

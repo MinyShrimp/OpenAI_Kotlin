@@ -13,15 +13,17 @@ class Prompt(
     val id: UUID = UUID.randomUUID(),
 
     @Enumerated(EnumType.STRING)
+    @Column(name = "role", nullable = false)
     var role: Role,
 
     @Enumerated(EnumType.STRING)
+    @Column(name = "name", nullable = false)
     var name: Name,
 
-    @Column
+    @Column(name = "content", nullable = false)
     var content: String,
 
-    @Column(name = "ordering")
+    @Column(name = "ordering", nullable = false)
     var order: Int,
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)

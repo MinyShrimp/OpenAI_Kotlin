@@ -4,13 +4,10 @@ import jakarta.transaction.Transactional
 import mu.KotlinLogging
 import org.springframework.web.bind.annotation.*
 import shrimp.openai_api.context.dto.request.CreateContextRequest
-import shrimp.openai_api.context.dto.response.CreateContextResponse
-import shrimp.openai_api.context.dto.response.GetContextResponse
-import shrimp.openai_api.context.dto.response.GetHistoryResponse
-import shrimp.openai_api.context.dto.response.GetPromptResponse
+import shrimp.openai_api.context.dto.response.*
 import shrimp.openai_api.context.repository.ContextRepository
-import shrimp.openai_api.context.repository.HistoryRepository
 import shrimp.openai_api.context.repository.PromptRepository
+import java.time.LocalDateTime
 import java.util.*
 
 @RestController
@@ -18,7 +15,6 @@ import java.util.*
 class ContextController(
     private val promptRepository: PromptRepository,
     private val contextRepository: ContextRepository,
-    private val historyRepository: HistoryRepository
 ) {
     private val logger = KotlinLogging.logger {}
 
@@ -36,16 +32,8 @@ class ContextController(
         return promptList.map { GetPromptResponse.of(it) }
     }
 
-    @GetMapping("/{id}/history")
-    fun getHistoryList(
-        @PathVariable("id") contextId: UUID
-    ): List<GetHistoryResponse> {
-        val historyList = historyRepository.findByContextIdOrderByCreateAt(contextId)
-        return historyList.map { GetHistoryResponse.of(it) }
-    }
-
     @Transactional
-    @PostMapping("/create")
+    @PostMapping
     fun createContext(
         @RequestBody dto: CreateContextRequest
     ): CreateContextResponse {
@@ -56,5 +44,43 @@ class ContextController(
 
         val savedContext = contextRepository.save(context)
         return CreateContextResponse.of(savedContext)
+    }
+
+    @Transactional
+    @PutMapping
+    fun updateContext(
+        @RequestBody dto: CreateContextRequest
+    ): CreateContextResponse {
+        val isExists = contextRepository.existsById(dto.id)
+        if (!isExists) {
+            throw IllegalArgumentException("Context not found")
+        }
+
+        val context = contextRepository.findById(dto.id).get()
+        context.title = dto.title
+        context.description = dto.description
+
+        promptRepository.deleteAllByContextId(dto.id)
+        context.prePromptList = dto.prePromptList
+            .mapIndexed { index, prePromptDTO -> prePromptDTO.convertEntity(index, context) }
+
+        val savedContext = contextRepository.save(context)
+        return CreateContextResponse.of(savedContext)
+    }
+
+    @Transactional
+    @DeleteMapping("/{id}")
+    fun deleteContext(
+        @PathVariable("id") contextId: UUID,
+    ): UUID {
+        val isExists = contextRepository.existsById(contextId)
+        if (!isExists) {
+            throw IllegalArgumentException("Context not found")
+        }
+
+        val context = contextRepository.findById(contextId).get()
+        context.deleteAt = LocalDateTime.now()
+        contextRepository.save(context)
+        return contextId
     }
 }

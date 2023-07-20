@@ -10,7 +10,8 @@ import java.util.*
 data class CreateContextRequest(
     val id: UUID,
     val title: String,
-    val description: String,
+    val model: String,
+    val description: String?,
     @JsonProperty("pre_prompt_list")
     val prePromptList: List<PrePromptDTO>,
 ) {
@@ -37,6 +38,7 @@ data class CreateContextRequest(
         return Context(
             id = this.id,
             title = this.title,
+            model = this.model,
             description = this.description,
         )
     }

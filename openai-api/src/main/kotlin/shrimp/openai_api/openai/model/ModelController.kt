@@ -1,4 +1,4 @@
-package shrimp.openai_api.model
+package shrimp.openai_api.openai.model
 
 import mu.KotlinLogging
 import org.springframework.web.bind.annotation.*

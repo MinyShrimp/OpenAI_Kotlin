@@ -18,12 +18,14 @@ class History(
     val id: UUID = UUID.randomUUID(),
 
     @Enumerated(EnumType.STRING)
+    @Column(name = "role", nullable = false)
     var role: Role,
 
     @Enumerated(EnumType.STRING)
+    @Column(name = "name", nullable = false)
     var name: Name,
 
-    @Column
+    @Column(name = "content", nullable = false)
     var content: String,
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)

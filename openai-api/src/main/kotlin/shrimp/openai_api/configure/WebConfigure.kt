@@ -1,4 +1,4 @@
-package shrimp.openai_api.base
+package shrimp.openai_api.configure
 
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration

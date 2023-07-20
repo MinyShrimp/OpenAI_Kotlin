@@ -1,10 +1,10 @@
-package shrimp.openai_api.chat_completion.controller
+package shrimp.openai_api.openai.chat_completion.controller
 
 import mu.KotlinLogging
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.reactive.function.client.WebClientResponseException
 import reactor.core.publisher.Flux
-import shrimp.openai_api.chat_completion.dto.ChatCompletionDTO
+import shrimp.openai_api.openai.chat_completion.dto.ChatCompletionDTO
 import shrimp.openai_core.api.completion.service.CompletionService
 import shrimp.openai_core.base.OpenAIOption
 import java.util.*

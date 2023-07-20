@@ -8,4 +8,6 @@ import java.util.*
 @Repository
 interface PromptRepository : JpaRepository<Prompt, UUID> {
     fun findByContextIdOrderByOrderAsc(contextId: UUID): List<Prompt>
+
+    fun deleteAllByContextId(contextId: UUID)
 }
