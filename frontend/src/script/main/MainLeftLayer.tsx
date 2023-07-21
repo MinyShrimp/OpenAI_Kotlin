@@ -7,10 +7,10 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 
 import {MenuLayer} from "../menu/MenuLayer";
 import {OptionModalLayer} from "../option/OptionModalLayer";
-import {ChatCompletionListLayer} from "../chat_completion_list/ChatCompletionListLayer";
+import {ContextListLayer} from "../chat_completion/components/context_list/ContextListLayer";
 
-import {useAppSelector} from "../RootStore";
-import {LEFT_STATE} from "../states/left_state";
+import {useRecoilState} from "recoil";
+import {LEFT_STATE, LeftMenuState} from "../states/left_state";
 
 export default function MainLeftLayer(
     props: {
@@ -23,11 +23,11 @@ export default function MainLeftLayer(
         setOptionModalOpen(false);
     }
 
-    const selector = useAppSelector((state) => state.leftStateReducer);
+    const [leftMenuState,] = useRecoilState(LeftMenuState);
     const convertMenu = (state: LEFT_STATE): JSX.Element => {
         switch (state) {
             case LEFT_STATE.CHAT_COMPLETION:
-                return <ChatCompletionListLayer/>;
+                return <ContextListLayer/>;
             case LEFT_STATE.DEFAULT:
             default:
                 return <MenuLayer/>;
@@ -63,7 +63,7 @@ export default function MainLeftLayer(
                     overflowY: "auto",
                 }}
             >
-                {convertMenu(selector.state)}
+                {convertMenu(leftMenuState)}
             </Container>
             <Divider/>
             <Grid

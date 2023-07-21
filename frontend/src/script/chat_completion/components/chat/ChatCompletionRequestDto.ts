@@ -1,4 +1,4 @@
-import {CHAT_MODEL, IPrompt} from "../states/context";
+import {CHAT_MODEL, IPrompt} from "../../../states/context";
 
 export interface ChatCompletionRequestDto {
     model: CHAT_MODEL,

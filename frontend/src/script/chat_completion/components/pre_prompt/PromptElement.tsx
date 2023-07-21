@@ -3,42 +3,65 @@ import {JSX, useEffect, useRef, useState} from "react";
 
 import {Accordion, AccordionDetails, AccordionSummary, Box, Button, Container, Typography} from "@mui/material";
 
+import {useRecoilState} from "recoil";
+import {
+    ContextState,
+    GetContext,
+    IContext,
+    IPrompt,
+    ISetting,
+    NowContextIdState,
+    PROMPT_ROLE
+} from "../../../states/context";
+import {RIGHT_STATE, RightLayerState} from "../../../states/right_state";
+
 import {PromptForm} from "./PromptForm";
 import {PromptSettingForm} from "./PromptSettingForm";
-import {defaultPrompt, IPrePrompt, PRE_PROMPT_TYPE, TransPrePromptType} from "./PrePromptTypes";
-
-import {useAppDispatch} from "../RootStore";
-import {setNowContextId} from "../states/now_context";
-import {RIGHT_STATE, setRightState} from "../states/right_state";
-import {IContext, IPrompt, ISetting, PROMPT_ROLE} from "../states/context";
+import {defaultContextSetting, defaultPrompt, IPrePrompt, PRE_PROMPT_TYPE, TransPrePromptType} from "./PrePromptTypes";
 
 export function PromptElement(
     props: {
         commitHandler: (setting: ISetting, prePromptList: IPrompt[]) => IContext,
-        defaultSetting: ISetting,
-        defaultPromptList: IPrePrompt[],
     }
 ): JSX.Element {
-    const dispatch = useAppDispatch();
-
-    const [setting, setSetting] = useState<ISetting>(props.defaultSetting);
-    const [promptList, setPromptList] = useState<IPrePrompt[]>(props.defaultPromptList);
+    const [setting, setSetting] = useState<ISetting>({...defaultContextSetting});
+    const [promptList, setPromptList] = useState<IPrePrompt[]>([{...defaultPrompt}]);
 
     const addButtonRef = useRef<HTMLButtonElement>(null);
     const lastPromptItem = useRef<HTMLTextAreaElement>(null);
 
-    const init = (): void => {
-        if (props.defaultPromptList.length === 0) {
-            setPromptList([{...defaultPrompt}]);
-        } else {
-            setPromptList(props.defaultPromptList);
-        }
-    }
-    useEffect(init, [props.defaultPromptList]);
+    const [contextList,] = useRecoilState(ContextState);
+    const [nowContextId, setNowContextId] = useRecoilState(NowContextIdState);
+    const [, setRightLayerState] = useRecoilState(RightLayerState);
 
     useEffect(() => {
-        setSetting(props.defaultSetting);
-    }, [props.defaultSetting])
+        const context = GetContext(contextList, nowContextId);
+        if (context === undefined) {
+            setSetting({...defaultContextSetting});
+            setPromptList([{...defaultPrompt}]);
+            return;
+        }
+
+        setSetting({...context.setting});
+        if (context.prePrompt.length === 0) {
+            setPromptList([{...defaultPrompt}]);
+        } else {
+            setPromptList(
+                context.prePrompt.map((prompt) => {
+                    return {
+                        ...prompt,
+                        _id: uuidv4(),
+                        type: prompt.name ?? PRE_PROMPT_TYPE.SYSTEM,
+                        disabled: false,
+                    }
+                })
+            );
+        }
+
+        setTimeout(() => {
+            addButtonRef.current?.scrollIntoView({behavior: 'smooth', block: 'end'});
+        });
+    }, [nowContextId, contextList]);
 
     const addPrompt = (): void => {
         setPromptList((prevList) => {
@@ -97,13 +120,12 @@ export function PromptElement(
             });
 
         const context = props.commitHandler(_setting, prePromptList);
-        setNowContextId(dispatch, context.id);
-        setRightState(dispatch, RIGHT_STATE.CHAT_COMPLETION);
+        setNowContextId(context.id);
+        setRightLayerState(RIGHT_STATE.CHAT_COMPLETION);
     };
 
     const cancel = (): void => {
-        init();
-        setRightState(dispatch, RIGHT_STATE.CHAT_COMPLETION);
+        setRightLayerState(RIGHT_STATE.CHAT_COMPLETION);
     };
 
     return (

@@ -20,7 +20,10 @@ class Prompt(
     @Column(name = "name", nullable = false)
     var name: Name,
 
-    @Column(name = "content", nullable = false)
+    @Column(
+        name = "content", nullable = false,
+        columnDefinition = "LONGTEXT"
+    )
     var content: String,
 
     @Column(name = "ordering", nullable = false)

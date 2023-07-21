@@ -1,7 +1,7 @@
 import {ChangeEvent, Dispatch, JSX, SetStateAction} from 'react';
 import {Col, Form, Row} from "react-bootstrap";
 import {TextareaAutosize} from "@mui/material";
-import {CHAT_MODEL, ISetting} from "../states/context";
+import {CHAT_MODEL, ISetting} from "../../../states/context";
 
 export function PromptSettingForm(
     props: {

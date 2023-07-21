@@ -1,10 +1,10 @@
-import {JSX} from "react";
+import {ForwardedRef, forwardRef} from "react";
 import {Box, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, useTheme} from "@mui/material";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import {CopyBlock, dracula, tomorrow} from "react-code-blocks";
 import {CodeProps, ReactMarkdownProps, TableRowProps} from "react-markdown/lib/ast-to-react";
-import {IPrompt} from "../states/context";
+import {IPrompt} from "../../../states/context";
 
 function PromptCodeBlock({inline, className, children}: CodeProps) {
     const match = /language-(\w+)/.exec(className ?? '');
@@ -32,9 +32,10 @@ const PromptTableBody = ({children}: ReactMarkdownProps) => <TableBody>{children
 const PromptTableRow = ({children}: TableRowProps) => <TableRow>{children}</TableRow>;
 const PromptTableCell = ({children}: ReactMarkdownProps) => <TableCell>{children}</TableCell>;
 
-export function PromptBox(
-    props: IPrompt
-): JSX.Element {
+export const PromptBox = forwardRef((
+    props: IPrompt,
+    ref: ForwardedRef<HTMLDivElement> | undefined
+) => {
     return <Box
         sx={{
             border: 1,
@@ -48,6 +49,7 @@ export function PromptBox(
                 ? "background.default"
                 : "background.paper",
         }}
+        ref={ref}
     >
         <ReactMarkdown
             className={"reactMarkDown"}
@@ -65,4 +67,4 @@ export function PromptBox(
             {props.content}
         </ReactMarkdown>
     </Box>
-}
+})

@@ -1,12 +1,3 @@
-export const CONTEXT_ACTION = {
-    ADD_CONTEXT: "context/add",
-    INIT_CONTEXT: "context/init",
-    CHANGE_CONTEXT: "context/change",
-    DELETE_CONTEXT: "context/delete",
-    ADD_HISTORY: "context/history/add",
-} as const;
-export type CONTEXT_ACTION = typeof CONTEXT_ACTION[keyof typeof CONTEXT_ACTION];
-
 export const PROMPT_ROLE = {
     USER: "user",
     SYSTEM: "system",
@@ -46,11 +37,3 @@ export interface IContext {
     prePrompt: IPrompt[];
     history: IPrompt[];
 }
-
-export interface IContextState {
-    contexts: IContext[]
-}
-
-export const defaultContextState: IContextState = {
-    contexts: []
-};

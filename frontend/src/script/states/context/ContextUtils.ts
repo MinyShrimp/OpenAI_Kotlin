@@ -1,4 +1,4 @@
-import {IPrompt} from "./ContextTypes";
+import {IContext, IPrompt} from "./ContextTypes";
 
 export const ConvertPromptToRequest = (
     prompt: IPrompt
@@ -8,4 +8,11 @@ export const ConvertPromptToRequest = (
         content: prompt.content,
         name: (!prompt.name) ? undefined : prompt.name,
     };
+}
+
+export const GetContext = (
+    contextList: IContext[],
+    nowContextId: string
+) => {
+    return contextList.find(context => context.id === nowContextId)
 }

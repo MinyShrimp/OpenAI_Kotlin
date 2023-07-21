@@ -55,9 +55,10 @@ class ContextController(
         if (!isExists) {
             throw IllegalArgumentException("Context not found")
         }
-
+        
         val context = contextRepository.findById(dto.id).get()
         context.title = dto.title
+        context.model = dto.model
         context.description = dto.description
 
         promptRepository.deleteAllByContextId(dto.id)

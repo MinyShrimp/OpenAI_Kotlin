@@ -25,7 +25,10 @@ class History(
     @Column(name = "name", nullable = false)
     var name: Name,
 
-    @Column(name = "content", nullable = false)
+    @Column(
+        name = "content", nullable = false,
+        columnDefinition = "LONGTEXT"
+    )
     var content: String,
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)

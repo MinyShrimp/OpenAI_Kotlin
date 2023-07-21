@@ -1,40 +1,42 @@
-import {Dispatch} from "redux";
+import {SetterOrUpdater} from "recoil";
+
 import {MENU} from "./MenuTypes";
-import {LEFT_STATE, setLeftState} from "../states/left_state";
-import {RIGHT_STATE, setRightState} from "../states/right_state";
+import {LEFT_STATE} from "../states/left_state";
+import {RIGHT_STATE} from "../states/right_state";
 
 export const ConvertMenuToLRState = (
-    dispatch: Dispatch,
-    menu: MENU
+    menu: MENU,
+    setLeftMenuState: SetterOrUpdater<LEFT_STATE>,
+    setRightLayerState: SetterOrUpdater<RIGHT_STATE>
 ): void => {
     switch (menu) {
         case MENU.COMPLETION:
-            setLeftState(dispatch, LEFT_STATE.DEFAULT);
-            setRightState(dispatch, RIGHT_STATE.COMPLETION);
+            setLeftMenuState(LEFT_STATE.DEFAULT);
+            setRightLayerState(RIGHT_STATE.COMPLETION);
             break;
         case MENU.CHAT_COMPLETION:
-            setLeftState(dispatch, LEFT_STATE.CHAT_COMPLETION);
-            setRightState(dispatch, RIGHT_STATE.CHAT_COMPLETION);
+            setLeftMenuState(LEFT_STATE.CHAT_COMPLETION);
+            setRightLayerState(RIGHT_STATE.CHAT_COMPLETION);
             break;
         case MENU.MODEL:
-            setLeftState(dispatch, LEFT_STATE.DEFAULT);
-            setRightState(dispatch, RIGHT_STATE.MODEL);
+            setLeftMenuState(LEFT_STATE.DEFAULT);
+            setRightLayerState(RIGHT_STATE.MODEL);
             break;
         case MENU.FILE:
-            setLeftState(dispatch, LEFT_STATE.DEFAULT);
-            setRightState(dispatch, RIGHT_STATE.FILE);
+            setLeftMenuState(LEFT_STATE.DEFAULT);
+            setRightLayerState(RIGHT_STATE.FILE);
             break;
         case MENU.FINE_TUNING:
-            setLeftState(dispatch, LEFT_STATE.DEFAULT);
-            setRightState(dispatch, RIGHT_STATE.FINE_TUNING);
+            setLeftMenuState(LEFT_STATE.DEFAULT);
+            setRightLayerState(RIGHT_STATE.FINE_TUNING);
             break;
         case MENU.DASHBOARD:
-            setLeftState(dispatch, LEFT_STATE.DEFAULT);
-            setRightState(dispatch, RIGHT_STATE.DASHBOARD);
+            setLeftMenuState(LEFT_STATE.DEFAULT);
+            setRightLayerState(RIGHT_STATE.DASHBOARD);
             break;
         default:
-            setLeftState(dispatch, LEFT_STATE.DEFAULT);
-            setRightState(dispatch, RIGHT_STATE.DEFAULT);
+            setLeftMenuState(LEFT_STATE.DEFAULT);
+            setRightLayerState(RIGHT_STATE.DEFAULT);
             break;
     }
 }

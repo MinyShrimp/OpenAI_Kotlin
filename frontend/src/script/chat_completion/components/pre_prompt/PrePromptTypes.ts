@@ -1,5 +1,5 @@
 import {v4 as uuidv4} from "uuid";
-import {CHAT_MODEL, IPrompt, ISetting, PROMPT_NAME, PROMPT_ROLE} from "../states/context";
+import {CHAT_MODEL, IPrompt, ISetting, PROMPT_NAME, PROMPT_ROLE} from "../../../states/context";
 
 export const PRE_PROMPT_TYPE = {
     SYSTEM: "system",

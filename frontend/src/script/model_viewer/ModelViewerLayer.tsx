@@ -3,14 +3,14 @@ import {JSX, useEffect, useState} from "react";
 import {Grid} from "@mui/material";
 import {DataGrid} from '@mui/x-data-grid';
 
-import {axiosClient} from "../base/request";
+import {AxiosClient} from "../base/AxiosClient";
 
 export function ModelViewerLayer(): JSX.Element {
     // const [pending, setPending] = useState<boolean>(false);
     const [models, setModels] = useState<any[]>([]);
 
     useEffect(() => {
-        axiosClient.get(
+        AxiosClient.get(
             "/model/list",
             {
                 headers: {

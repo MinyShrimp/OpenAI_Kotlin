@@ -3,11 +3,11 @@ import {IconButton, ListSubheader, Typography} from "@mui/material";
 import {faBackward} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 
-import {useAppDispatch} from "../RootStore";
-import {LEFT_STATE, setLeftState} from "../states/left_state";
+import {useRecoilState} from "recoil";
+import {LEFT_STATE, LeftMenuState} from "../../../states/left_state";
 
 export function ContextListHeader() {
-    const dispatch = useAppDispatch();
+    const [, setLeftMenuState] = useRecoilState(LeftMenuState);
 
     return (
         <ListSubheader
@@ -28,7 +28,7 @@ export function ContextListHeader() {
                     top: "4px",
                     left: "8px"
                 }}
-                onClick={() => setLeftState(dispatch, LEFT_STATE.DEFAULT)}
+                onClick={() => setLeftMenuState(LEFT_STATE.DEFAULT)}
             >
                 <FontAwesomeIcon
                     icon={faBackward}

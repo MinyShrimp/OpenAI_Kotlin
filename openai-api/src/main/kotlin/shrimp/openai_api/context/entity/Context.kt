@@ -16,10 +16,16 @@ class Context(
     @Column(name = "context_id")
     var id: UUID,
 
-    @Column(name = "title", nullable = false)
+    @Column(
+        name = "title", nullable = false,
+        columnDefinition = "LONGTEXT"
+    )
     var title: String,
 
-    @Column(name = "description", nullable = true)
+    @Column(
+        name = "description", nullable = true,
+        columnDefinition = "LONGTEXT"
+    )
     var description: String? = null,
 
     @Column(name = "model", nullable = false)
@@ -46,5 +52,4 @@ class Context(
 
     @LastModifiedDate
     lateinit var updateAt: LocalDateTime
-        private set
 }

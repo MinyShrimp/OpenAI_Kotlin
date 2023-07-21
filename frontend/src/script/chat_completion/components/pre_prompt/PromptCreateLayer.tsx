@@ -1,19 +1,19 @@
 import {v4 as uuidv4} from "uuid";
-
 import {JSX, useEffect} from "react";
 
-import {useAppDispatch} from "../RootStore";
-import {setNowContextId} from "../states/now_context";
-import {CONTEXT_ACTION, IContext, IPrompt, ISetting} from "../states/context";
+import {useRecoilState} from "recoil";
+import {IContext, IPrompt, ISetting, NowContextIdState} from "../../../states/context";
+
+import {CreateContext} from "../../api/context/CreateContext";
 
 import {PromptElement} from "./PromptElement";
-import {defaultContextSetting, defaultPrompt} from "./PrePromptTypes";
 
 export function PromptCreateLayer(): JSX.Element {
-    const dispatch = useAppDispatch();
+    const [, setNowContextId] = useRecoilState(NowContextIdState);
+    const createContextMutation = CreateContext();
 
     useEffect(() => {
-        setNowContextId(dispatch, "");
+        setNowContextId("");
     }, []);
 
     const commitHandler = (
@@ -27,17 +27,12 @@ export function PromptCreateLayer(): JSX.Element {
             history: []
         };
 
-        dispatch({
-            type: CONTEXT_ACTION.ADD_CONTEXT,
-            payload: context
-        });
+        createContextMutation.mutate(context);
         return context;
     };
 
     return (
         <PromptElement
-            defaultSetting={{...defaultContextSetting}}
-            defaultPromptList={[{...defaultPrompt}]}
             commitHandler={commitHandler}
         />
     );

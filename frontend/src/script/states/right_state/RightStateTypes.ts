@@ -10,16 +10,3 @@ export const RIGHT_STATE = {
     DASHBOARD: 8
 } as const;
 export type RIGHT_STATE = typeof RIGHT_STATE[keyof typeof RIGHT_STATE];
-
-export const RIGHT_STATE_ACTION = {
-    SET_RIGHT_STATE: "rightState/setRightState"
-} as const;
-export type RIGHT_STATE_ACTION = typeof RIGHT_STATE_ACTION[keyof typeof RIGHT_STATE_ACTION];
-
-export interface IRightState {
-    state: RIGHT_STATE;
-}
-
-export const defaultRightState: IRightState = {
-    state: RIGHT_STATE.DEFAULT
-};

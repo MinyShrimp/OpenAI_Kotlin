@@ -1,37 +1,52 @@
-import {ChangeEvent, JSX, KeyboardEvent, useEffect, useState} from "react";
+import {ChangeEvent, JSX, KeyboardEvent, useEffect, useRef, useState} from "react";
 import {Form} from "react-bootstrap";
 import {Box, Container, TextareaAutosize} from "@mui/material";
 
-import {requestStream} from "../base/requestStream";
-
-import {useAppDispatch, useAppSelector} from "../RootStore";
-import {CHAT_MODEL, CONTEXT_ACTION, IPrompt} from "../states/context";
-import {ConvertPromptToRequest} from "../states/context/ContextUtils";
+import {useRecoilState} from "recoil";
+import {
+    CHAT_MODEL,
+    ContextState,
+    ConvertPromptToRequest,
+    GetContext,
+    IPrompt,
+    NowContextIdState
+} from "../../../states/context";
+import {requestStream} from "../../../base/requestStream";
 
 import {PromptBox} from "./PromptBox";
 import {ChatCompletionRequestDto} from "./ChatCompletionRequestDto";
-import {axiosClient} from "../base/request";
+
+import {AddHistory} from "../../api/history/AddHistory";
+import {GetHistoryList} from "../../api/history/GetHistoryList";
 
 export function ChatCompletionLayer(): JSX.Element {
     const [message, setMessage] = useState<string>("");
-    const [historis, setHistoris] = useState<IPrompt[]>([]);
     const [respMsg, setRespMsg] = useState<string>("");
     const [pending, setPending] = useState<boolean>(false);
 
-    const dispatch = useAppDispatch();
-    const contextState = useAppSelector(state => state.contextReducer);
-    const nowContextState = useAppSelector(state => state.nowContextReducer);
+    const [contextState,] = useRecoilState(ContextState);
+    const [nowContextIdState,] = useRecoilState(NowContextIdState);
+
+    const {refetch} = GetHistoryList(() => {
+        setTimeout(moveScrollEnd);
+    });
+    const addHistoryMutation = AddHistory();
+
+    const containerElement = useRef<HTMLDivElement>(null);
+    const moveScrollEnd = () => {
+        if (containerElement.current !== null) {
+            containerElement.current.scrollTop = containerElement.current.scrollHeight;
+        }
+    }
 
     useEffect(() => {
-        setHistoris(getContext()?.history ?? []);
-    }, [nowContextState, contextState]);
-
-    const getContext = () => contextState.contexts.find(context => context.id === nowContextState.id);
+        refetch();
+    }, [nowContextIdState]);
 
     const getRequest = (
         newPrompt: IPrompt
     ): ChatCompletionRequestDto => {
-        const context = getContext();
+        const context = GetContext(contextState, nowContextIdState);
         if (context === undefined) {
             return {
                 model: CHAT_MODEL.GPT_3_5,
@@ -50,29 +65,16 @@ export function ChatCompletionLayer(): JSX.Element {
     }
 
     const addHistory = (history: IPrompt): void => {
-        axiosClient.post(
-            "/context",
+        addHistoryMutation.mutate(
+            history,
             {
-                id: nowContextState.id,
-                role: history.role,
-                name: history.name,
-                content: history.content
-            }
-        ).then((response) => {
-            dispatch({
-                type: CONTEXT_ACTION.ADD_HISTORY,
-                payload: {
-                    id: nowContextState.id,
-                    history: [
-                        {
-                            role: response.data.role,
-                            name: response.data.name,
-                            content: response.data.content
-                        }
-                    ]
+                onSuccess: () => {
+                    setRespMsg("");
+                    setPending(false);
+                    moveScrollEnd();
                 }
-            });
-        })
+            }
+        );
     }
 
     const onKeyDown = (e: KeyboardEvent<HTMLFormElement>): void => {
@@ -118,6 +120,7 @@ export function ChatCompletionLayer(): JSX.Element {
             body: JSON.stringify(reqBody)
         }, (chunk) => {
             setRespMsg(prevRespMsg => prevRespMsg + chunk);
+            moveScrollEnd();
             return chunk;
         }).then((result) => {
             if (result !== undefined) {
@@ -127,9 +130,6 @@ export function ChatCompletionLayer(): JSX.Element {
                     content: result
                 });
             }
-
-            setRespMsg("");
-            setPending(false);
         });
     }
 
@@ -149,15 +149,17 @@ export function ChatCompletionLayer(): JSX.Element {
                     overflowX: "hidden",
                     overflowY: "auto"
                 }}
+                ref={containerElement}
             >
-                {historis.map(
-                    (item, index) => <PromptBox
-                        role={item.role}
-                        name={item.name}
-                        content={item.content}
-                        key={index}
-                    />
-                )}
+                {GetContext(contextState, nowContextIdState)?.history
+                    .map(
+                        (item, index) => <PromptBox
+                            role={item.role}
+                            name={item.name}
+                            content={item.content}
+                            key={index}
+                        />
+                    )}
                 {
                     !respMsg
                         ? null
@@ -188,7 +190,7 @@ export function ChatCompletionLayer(): JSX.Element {
                         minHeight: "24px"
                     }}
                     disabled={
-                        pending || nowContextState.id === ""
+                        pending || nowContextIdState === ""
                     }
                 />
             </Form>

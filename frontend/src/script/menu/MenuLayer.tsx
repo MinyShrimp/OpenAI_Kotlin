@@ -1,20 +1,21 @@
 import {JSX} from "react";
 import {List, ListItemButton, ListItemText, ListSubheader, Slide} from "@mui/material";
 
-import {MENU} from "./MenuTypes";
-import {LEFT_STATE} from "../states/left_state";
-import {useAppDispatch, useAppSelector} from "../RootStore";
+import {useRecoilState} from "recoil";
+import {LEFT_STATE, LeftMenuState} from "../states/left_state";
 
+import {MENU} from "./MenuTypes";
 import {ConvertMenuToLRState} from "./ConvertMenuToLRState";
+import {RightLayerState} from "../states/right_state";
 
 export function MenuLayer(): JSX.Element {
-    const dispatch = useAppDispatch();
-    const leftState = useAppSelector((selector) => selector.leftStateReducer)
+    const [leftMenuState, setLeftMenuState] = useRecoilState(LeftMenuState);
+    const [, setRightLayerState] = useRecoilState(RightLayerState);
 
     return (
         <Slide
             direction="right"
-            in={leftState.state === LEFT_STATE.DEFAULT}
+            in={leftMenuState === LEFT_STATE.DEFAULT}
         >
             <List
                 component="nav"
@@ -31,8 +32,9 @@ export function MenuLayer(): JSX.Element {
                             <ListItemButton
                                 key={index}
                                 onClick={() => ConvertMenuToLRState(
-                                    dispatch,
-                                    MENU[entry[0] as keyof typeof MENU]
+                                    MENU[entry[0] as keyof typeof MENU],
+                                    setLeftMenuState,
+                                    setRightLayerState
                                 )}
                             >
                                 <ListItemText primary={entry[1]}/>

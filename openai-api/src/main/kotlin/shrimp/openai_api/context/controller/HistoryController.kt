@@ -39,6 +39,8 @@ class HistoryController(
         val context = contextRepository.findById(dto.id).get()
         val history = dto.convertEntity(context)
         val savedHistory = historyRepository.save(history)
+        context.updateAt = savedHistory.createAt
+        contextRepository.save(context)
         return AddHistoryResponse.of(savedHistory)
     }
 }
