@@ -5,9 +5,11 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 
 import {useRecoilState} from "recoil";
 import {LEFT_STATE, LeftMenuState} from "../../../states/left_state";
+import {NowContextIdState} from "../../../states/context";
 
 export function ContextListHeader() {
     const [, setLeftMenuState] = useRecoilState(LeftMenuState);
+    const [, setNowContextId] = useRecoilState(NowContextIdState);
 
     return (
         <ListSubheader
@@ -28,7 +30,10 @@ export function ContextListHeader() {
                     top: "4px",
                     left: "8px"
                 }}
-                onClick={() => setLeftMenuState(LEFT_STATE.DEFAULT)}
+                onClick={() => {
+                    setLeftMenuState(LEFT_STATE.DEFAULT)
+                    setNowContextId("")
+                }}
             >
                 <FontAwesomeIcon
                     icon={faBackward}

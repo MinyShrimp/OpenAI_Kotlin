@@ -61,7 +61,7 @@ export function PromptElement(
         setTimeout(() => {
             addButtonRef.current?.scrollIntoView({behavior: 'smooth', block: 'end'});
         });
-    }, [nowContextId, contextList]);
+    }, [nowContextId]);
 
     const addPrompt = (): void => {
         setPromptList((prevList) => {

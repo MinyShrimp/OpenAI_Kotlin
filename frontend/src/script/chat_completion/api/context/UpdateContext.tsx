@@ -26,6 +26,7 @@ export function UpdateContext() {
             onSuccess: async (data) => {
                 console.log("UpdateContext", data);
                 await queryClient.invalidateQueries("GetContextList");
+                await queryClient.invalidateQueries("GetHistoryList");
             },
             onError: error => {
                 console.error(error)
