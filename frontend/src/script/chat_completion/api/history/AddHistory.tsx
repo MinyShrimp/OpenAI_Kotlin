@@ -22,7 +22,7 @@ export function AddHistory() {
 
     return useMutation(
         async (prompt: IPrompt) => {
-            const resp = await AxiosClient.post("/context/history/add", getRequest(prompt));
+            const resp = await AxiosClient().post("/context/history/add", getRequest(prompt));
             return resp.data;
         }, {
             onSuccess: async (data: HistoryResponse) => {

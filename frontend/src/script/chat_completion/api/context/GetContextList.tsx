@@ -32,7 +32,7 @@ export function GetContextList() {
     return useQuery(
         "GetContextList",
         async () => {
-            const resp = await AxiosClient.get("/context");
+            const resp = await AxiosClient().get("/context");
             return resp.data;
         },
         {

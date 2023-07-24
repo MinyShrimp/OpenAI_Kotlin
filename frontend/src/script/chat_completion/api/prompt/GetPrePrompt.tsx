@@ -39,7 +39,7 @@ export function GetPrePrompt() {
     return useQuery(
         "GetPrePrompt",
         async () => {
-            const resp = await AxiosClient.get("/context/" + nowContextId + "/prompt");
+            const resp = await AxiosClient().get("/context/" + nowContextId + "/prompt");
             return resp.data;
         },
         {

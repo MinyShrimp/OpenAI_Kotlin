@@ -21,7 +21,7 @@ export function CreateContext() {
 
     return useMutation(
         async (context: IContext) => {
-            const resp = await AxiosClient.post("/context", getRequest(context));
+            const resp = await AxiosClient().post("/context", getRequest(context));
             return resp.data;
         }, {
             onSuccess: async (data: ContextResponse) => {

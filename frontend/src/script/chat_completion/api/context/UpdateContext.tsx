@@ -20,7 +20,7 @@ export function UpdateContext() {
 
     return useMutation(
         async (context: IContext) => {
-            const resp = await AxiosClient.put("/context", getRequest(context));
+            const resp = await AxiosClient().put("/context", getRequest(context));
             return resp.data;
         }, {
             onSuccess: async (data) => {

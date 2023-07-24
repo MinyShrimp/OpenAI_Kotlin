@@ -6,7 +6,7 @@ export function DeleteContext() {
 
     return useMutation(
         async (contextId: string) => {
-            const resp = await AxiosClient.delete("/context/" + contextId);
+            const resp = await AxiosClient().delete("/context/" + contextId);
             return resp.data;
         }, {
             onSuccess: async (data) => {

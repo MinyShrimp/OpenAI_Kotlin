@@ -39,7 +39,7 @@ export function GetHistoryList(
         async () => {
             if (nowContextId === "") return [];
 
-            const resp = await AxiosClient.get("/context/" + nowContextId + "/history");
+            const resp = await AxiosClient().get("/context/" + nowContextId + "/history");
             return resp.data;
         },
         {
