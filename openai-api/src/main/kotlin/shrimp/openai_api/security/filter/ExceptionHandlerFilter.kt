@@ -7,16 +7,12 @@ import jakarta.servlet.ServletRequest
 import jakarta.servlet.ServletResponse
 import jakarta.servlet.http.HttpServletResponse
 import org.springframework.http.HttpStatus
-import shrimp.openai_api.security.exception.AuthenticationException
+import shrimp.openai_api.security.dto.ErrorResponse
+import shrimp.openai_api.security.exception.AuthorizationException
 
 class ExceptionHandlerFilter(
     private val objectMapper: ObjectMapper
 ) : Filter {
-    data class ErrorResponse(
-        val status: Int,
-        val message: String
-    )
-
     override fun doFilter(
         request: ServletRequest,
         response: ServletResponse,
@@ -26,7 +22,7 @@ class ExceptionHandlerFilter(
 
         try {
             chain.doFilter(request, response)
-        } catch (e: AuthenticationException) {
+        } catch (e: AuthorizationException) {
             resp.status = HttpStatus.UNAUTHORIZED.value()
             resp.contentType = "application/json; charset=utf-8"
 

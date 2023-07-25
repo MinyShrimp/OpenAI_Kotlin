@@ -4,6 +4,8 @@ import jakarta.transaction.Transactional
 import org.springframework.stereotype.Service
 import shrimp.openai_api.security.entity.Account
 import shrimp.openai_api.security.entity.AccountSession
+import shrimp.openai_api.security.exception.AuthenticationException
+import shrimp.openai_api.security.exception.AuthorizationException
 import shrimp.openai_api.security.repository.AccountSessionRepository
 
 @Service
@@ -33,7 +35,7 @@ class AccountSessionService(
         account: Account
     ) {
         val session = this.accountSessionRepository.findByAccount(account)
-            ?: throw Exception("Not Exists Session")
+            ?: throw AuthenticationException("Not Exists Session")
 
         this.accountSessionRepository.delete(session)
     }
@@ -42,7 +44,7 @@ class AccountSessionService(
         token: String
     ): Account {
         val session = this.accountSessionRepository.findByToken(token)
-            ?: throw Exception("Not Exists Token")
+            ?: throw AuthorizationException("Not Exists Token")
 
         return session.account
     }

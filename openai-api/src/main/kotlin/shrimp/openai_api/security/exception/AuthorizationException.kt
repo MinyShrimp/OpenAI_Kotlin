@@ -1,10 +1,10 @@
 package shrimp.openai_api.security.exception
 
 /**
- * 인증 실패
- * - 로그인, 로그아웃, 회원 가입
+ * 인가 정보 예외
+ * - 토큰 관련
  */
-class AuthenticationException(
+class AuthorizationException(
     message: String = "",
     cause: Throwable? = null
 ) : RuntimeException(message, cause)

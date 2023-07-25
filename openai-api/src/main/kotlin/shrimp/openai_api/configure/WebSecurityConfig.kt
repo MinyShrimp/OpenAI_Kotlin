@@ -26,7 +26,7 @@ class WebSecurityConfig : WebMvcConfigurer {
             ExceptionHandlerFilter(objectMapper)
         )
         registration.order = 1
-        registration.addUrlPatterns("/api/*")
+        registration.addUrlPatterns("/api/*", "/auth/logout")
         return registration
     }
 
@@ -38,7 +38,7 @@ class WebSecurityConfig : WebMvcConfigurer {
             AuthTokenFilter(accountSessionService)
         )
         registration.order = 2
-        registration.addUrlPatterns("/api/*")
+        registration.addUrlPatterns("/api/*", "/auth/logout")
         return registration
     }
 }

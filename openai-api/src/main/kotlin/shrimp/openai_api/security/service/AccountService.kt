@@ -5,6 +5,7 @@ import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
 import shrimp.openai_api.security.dto.LoginRequest
 import shrimp.openai_api.security.entity.Account
+import shrimp.openai_api.security.exception.AuthenticationException
 import shrimp.openai_api.security.repository.AccountRepository
 import java.time.LocalDateTime
 
@@ -19,7 +20,7 @@ class AccountService(
         account: Account
     ): Account {
         val isExists = this.accountRepository.existsByEmail(account.email)
-        if (isExists) throw Exception("Already Exists Email")
+        if (isExists) throw AuthenticationException("Already Exists Email")
 
         account.password = this.passwordEncoder.encode(account.password)
         return this.accountRepository.save(account)
@@ -30,11 +31,11 @@ class AccountService(
         dto: LoginRequest
     ): Account {
         val isExists = this.accountRepository.existsByEmail(dto.email)
-        if (!isExists) throw Exception("Not Exists Email")
+        if (!isExists) throw AuthenticationException("Not Exists Email")
 
         val savedAccount = this.accountRepository.findByEmail(dto.email)!!
         val isMatch = this.passwordEncoder.matches(dto.password, savedAccount.password)
-        if (!isMatch) throw Exception("Password Not Matched")
+        if (!isMatch) throw AuthenticationException("Password Not Matched")
 
         savedAccount.isLogin = true
         savedAccount.loginAt = LocalDateTime.now()

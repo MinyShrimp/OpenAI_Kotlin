@@ -5,7 +5,7 @@ import jakarta.servlet.FilterChain
 import jakarta.servlet.ServletRequest
 import jakarta.servlet.ServletResponse
 import jakarta.servlet.http.HttpServletRequest
-import shrimp.openai_api.security.exception.AuthenticationException
+import shrimp.openai_api.security.exception.AuthorizationException
 import shrimp.openai_api.security.service.AccountSessionService
 import shrimp.openai_api.security.service.CookieService
 
@@ -20,10 +20,10 @@ class AuthTokenFilter(
         val req = request as HttpServletRequest
 
         val cookie = req.cookies.find { it.name == CookieService.COOKIE_NAME }
-        if (cookie == null) throw AuthenticationException("Not Exists Cookie")
+        if (cookie == null) throw AuthorizationException("Not Exists Cookie")
 
         val account = this.accountSessionService.getAccountByToken(cookie.value)
-        if (!account.isLogin) throw AuthenticationException("Not Login")
+        if (!account.isLogin) throw AuthorizationException("Not Login")
 
         chain.doFilter(request, response)
     }
