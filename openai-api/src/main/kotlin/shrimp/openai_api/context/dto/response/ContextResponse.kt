@@ -4,7 +4,7 @@ import shrimp.openai_api.context.entity.Context
 import java.time.LocalDateTime
 import java.util.*
 
-data class GetContextResponse(
+data class ContextResponse(
     val id: UUID,
     val model: String,
     val title: String,
@@ -14,8 +14,8 @@ data class GetContextResponse(
     companion object {
         fun of(
             context: Context
-        ): GetContextResponse {
-            return GetContextResponse(
+        ): ContextResponse {
+            return ContextResponse(
                 id = context.id,
                 model = context.model,
                 title = context.title,

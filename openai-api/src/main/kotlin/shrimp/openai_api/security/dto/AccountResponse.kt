@@ -7,7 +7,7 @@ import java.time.LocalDateTime
 data class AccountResponse(
     val name: String,
     val email: String,
-    val roles: Set<AccountRole>,
+    val role: AccountRole,
     val createAt: LocalDateTime,
     val updateAt: LocalDateTime
 ) {
@@ -18,7 +18,7 @@ data class AccountResponse(
             return AccountResponse(
                 name = entity.name,
                 email = entity.email,
-                roles = entity.roles,
+                role = entity.role,
                 createAt = entity.createAt,
                 updateAt = entity.updateAt
             )

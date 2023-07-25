@@ -5,7 +5,7 @@ import shrimp.openai_api.context.types.Name
 import shrimp.openai_api.context.types.Role
 import java.time.LocalDateTime
 
-data class GetHistoryResponse(
+data class HistoryResponse(
     val role: Role,
     val name: Name?,
     val content: String,
@@ -14,8 +14,8 @@ data class GetHistoryResponse(
     companion object {
         fun of(
             history: History
-        ): GetHistoryResponse {
-            return GetHistoryResponse(
+        ): HistoryResponse {
+            return HistoryResponse(
                 role = history.role,
                 name = history.name,
                 content = history.content,

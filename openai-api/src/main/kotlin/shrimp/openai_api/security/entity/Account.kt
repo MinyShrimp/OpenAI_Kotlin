@@ -4,6 +4,7 @@ import jakarta.persistence.*
 import org.springframework.data.annotation.CreatedDate
 import org.springframework.data.annotation.LastModifiedDate
 import org.springframework.data.jpa.domain.support.AuditingEntityListener
+import shrimp.openai_api.context.entity.Context
 import java.time.LocalDateTime
 import java.util.*
 
@@ -25,8 +26,7 @@ class Account(
 
     @Enumerated(EnumType.STRING)
     @Column(name = "role", nullable = false)
-    @ElementCollection(fetch = FetchType.EAGER)
-    var roles: MutableSet<AccountRole> = mutableSetOf(AccountRole.USER)
+    var role: AccountRole = AccountRole.USER
 ) {
     @Id
     @Column(name = "account_id")
@@ -44,6 +44,12 @@ class Account(
 
     @OneToOne(mappedBy = "account")
     var session: AccountSession? = null
+
+    @OneToMany(
+        mappedBy = "account",
+        cascade = [CascadeType.ALL]
+    )
+    var contextList: List<Context> = listOf()
 
     @CreatedDate
     lateinit var createAt: LocalDateTime

@@ -1,87 +1,52 @@
 package shrimp.openai_api.context.controller
 
-import jakarta.transaction.Transactional
 import mu.KotlinLogging
 import org.springframework.web.bind.annotation.*
 import shrimp.openai_api.context.dto.request.CreateContextRequest
+import shrimp.openai_api.context.dto.request.UpdateContextRequest
 import shrimp.openai_api.context.dto.response.*
-import shrimp.openai_api.context.repository.ContextRepository
-import shrimp.openai_api.context.repository.PromptRepository
-import java.time.LocalDateTime
+import shrimp.openai_api.context.service.ContextService
+import shrimp.openai_api.security.service.CookieService
 import java.util.*
 
 @RestController
 @RequestMapping("/api/context")
 class ContextController(
-    private val promptRepository: PromptRepository,
-    private val contextRepository: ContextRepository,
+    private val contextService: ContextService,
 ) {
     private val logger = KotlinLogging.logger {}
 
     @GetMapping
-    fun getContextList(): List<GetContextResponse> {
-        val contextList = contextRepository.findAllByOrderByUpdateAtDesc()
-        return contextList.map { GetContextResponse.of(it) }
+    fun getContextList(
+        @CookieValue(CookieService.COOKIE_NAME) token: String
+    ): List<ContextResponse> {
+        val contextList = this.contextService.getContextList(token)
+        return contextList.map { ContextResponse.of(it) }
     }
 
-    @GetMapping("/{id}/prompt")
-    fun getPromptList(
-        @PathVariable("id") contextId: UUID
-    ): List<GetPromptResponse> {
-        val promptList = promptRepository.findByContextIdOrderByOrderAsc(contextId)
-        return promptList.map { GetPromptResponse.of(it) }
-    }
-
-    @Transactional
     @PostMapping
     fun createContext(
-        @RequestBody dto: CreateContextRequest
-    ): CreateContextResponse {
-        val context = dto.convertEntity()
-        val prePromptList = dto.prePromptList
-            .mapIndexed { index, prePromptDTO -> prePromptDTO.convertEntity(index, context) }
-        context.prePromptList = prePromptList
-
-        val savedContext = contextRepository.save(context)
-        return CreateContextResponse.of(savedContext)
+        @RequestBody dto: CreateContextRequest,
+        @CookieValue(CookieService.COOKIE_NAME) token: String
+    ): ContextResponse {
+        val context = this.contextService.createContext(token, dto)
+        return ContextResponse.of(context)
     }
 
-    @Transactional
     @PutMapping
     fun updateContext(
-        @RequestBody dto: CreateContextRequest
-    ): CreateContextResponse {
-        val isExists = contextRepository.existsById(dto.id)
-        if (!isExists) {
-            throw IllegalArgumentException("Context not found")
-        }
-        
-        val context = contextRepository.findById(dto.id).get()
-        context.title = dto.title
-        context.model = dto.model
-        context.description = dto.description
-
-        promptRepository.deleteAllByContextId(dto.id)
-        context.prePromptList = dto.prePromptList
-            .mapIndexed { index, prePromptDTO -> prePromptDTO.convertEntity(index, context) }
-
-        val savedContext = contextRepository.save(context)
-        return CreateContextResponse.of(savedContext)
+        @RequestBody dto: UpdateContextRequest,
+        @CookieValue(CookieService.COOKIE_NAME) token: String
+    ): ContextResponse {
+        val context = this.contextService.updateContext(token, dto)
+        return ContextResponse.of(context)
     }
 
-    @Transactional
     @DeleteMapping("/{id}")
     fun deleteContext(
         @PathVariable("id") contextId: UUID,
-    ): UUID {
-        val isExists = contextRepository.existsById(contextId)
-        if (!isExists) {
-            throw IllegalArgumentException("Context not found")
-        }
-
-        val context = contextRepository.findById(contextId).get()
-        context.deleteAt = LocalDateTime.now()
-        contextRepository.save(context)
-        return contextId
+        @CookieValue(CookieService.COOKIE_NAME) token: String
+    ) {
+        this.contextService.deleteContext(token, contextId)
     }
 }
