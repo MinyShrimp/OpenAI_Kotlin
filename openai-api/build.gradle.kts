@@ -27,6 +27,5 @@ dependencies {
     testRuntimeOnly("com.h2database:h2:2.2.220")
 
     // spring security
-    implementation("org.springframework.boot:spring-boot-starter-security")
-    testImplementation("org.springframework.security:spring-security-test")
+    implementation("org.springframework.security:spring-security-crypto")
 }

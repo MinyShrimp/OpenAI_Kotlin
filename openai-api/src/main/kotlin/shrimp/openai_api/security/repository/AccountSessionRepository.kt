@@ -3,11 +3,12 @@ package shrimp.openai_api.security.repository
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Repository
 import shrimp.openai_api.security.entity.Account
+import shrimp.openai_api.security.entity.AccountSession
 import java.util.*
 
 @Repository
-interface AccountRepository : JpaRepository<Account, UUID> {
-    fun findByEmail(email: String): Account?
+interface AccountSessionRepository : JpaRepository<AccountSession, UUID> {
+    fun findByToken(token: String): AccountSession?
 
-    fun existsByEmail(email: String): Boolean
+    fun findByAccount(account: Account): AccountSession?
 }

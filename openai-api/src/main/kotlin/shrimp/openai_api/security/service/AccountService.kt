@@ -1,36 +1,56 @@
 package shrimp.openai_api.security.service
 
-import org.springframework.security.core.userdetails.UserDetails
-import org.springframework.security.core.userdetails.UserDetailsService
-import org.springframework.security.core.userdetails.UsernameNotFoundException
+import jakarta.transaction.Transactional
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
+import shrimp.openai_api.security.dto.LoginRequest
 import shrimp.openai_api.security.entity.Account
 import shrimp.openai_api.security.repository.AccountRepository
+import java.time.LocalDateTime
 
 @Service
 class AccountService(
+    private val passwordEncoder: PasswordEncoder,
     private val accountRepository: AccountRepository,
-    private val passwordEncoder: PasswordEncoder
-) : UserDetailsService {
+    private val accountSessionService: AccountSessionService
+) {
 
-    fun saveUser(
+    fun saveAccount(
         account: Account
     ): Account {
+        val isExists = this.accountRepository.existsByEmail(account.email)
+        if (isExists) throw Exception("Already Exists Email")
+
         account.password = this.passwordEncoder.encode(account.password)
         return this.accountRepository.save(account)
     }
 
-    fun loginUser(
-        account: Account
+    @Transactional
+    fun loginAccount(
+        dto: LoginRequest
     ): Account {
-        TODO()
+        val isExists = this.accountRepository.existsByEmail(dto.email)
+        if (!isExists) throw Exception("Not Exists Email")
+
+        val savedAccount = this.accountRepository.findByEmail(dto.email)!!
+        val isMatch = this.passwordEncoder.matches(dto.password, savedAccount.password)
+        if (!isMatch) throw Exception("Password Not Matched")
+
+        savedAccount.isLogin = true
+        savedAccount.loginAt = LocalDateTime.now()
+        savedAccount.session = this.accountSessionService.saveSession(savedAccount)
+        return this.accountRepository.save(savedAccount)
     }
 
-    override fun loadUserByUsername(
-        username: String
-    ): UserDetails {
-        return this.accountRepository.findByEmail(username)?.getAuthorities()
-            ?: throw UsernameNotFoundException("$username Can Not Found")
+    fun logoutAccount(
+        token: String
+    ): Account {
+        val account = this.accountSessionService.getAccountByToken(token)
+        account.isLogin = false
+        account.logoutAt = LocalDateTime.now()
+        account.session = null
+
+        this.accountSessionService.deleteSession(account)
+        return this.accountRepository.save(account)
     }
 }

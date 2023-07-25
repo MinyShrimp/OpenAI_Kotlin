@@ -4,11 +4,8 @@ import jakarta.persistence.*
 import org.springframework.data.annotation.CreatedDate
 import org.springframework.data.annotation.LastModifiedDate
 import org.springframework.data.jpa.domain.support.AuditingEntityListener
-import org.springframework.security.core.authority.SimpleGrantedAuthority
-import org.springframework.security.core.userdetails.User
 import java.time.LocalDateTime
 import java.util.*
-import java.util.stream.Collectors
 
 @Entity
 @EntityListeners(AuditingEntityListener::class)
@@ -34,8 +31,19 @@ class Account(
     @Id
     @Column(name = "account_id")
     @GeneratedValue(generator = "UUID")
-    var id: UUID = UUID.randomUUID()
-        private set
+    val id: UUID = UUID.randomUUID()
+
+    @Column(name = "login_at", nullable = true)
+    var loginAt: LocalDateTime? = null
+
+    @Column(name = "logout_at", nullable = true)
+    var logoutAt: LocalDateTime? = null
+
+    @Column(name = "is_login", nullable = false)
+    var isLogin: Boolean = false
+
+    @OneToOne(mappedBy = "account")
+    var session: AccountSession? = null
 
     @CreatedDate
     lateinit var createAt: LocalDateTime
@@ -43,14 +51,8 @@ class Account(
 
     @LastModifiedDate
     lateinit var updateAt: LocalDateTime
+        private set
 
-    fun getAuthorities(): User {
-        return User(
-            this.email,
-            this.password,
-            this.roles.stream()
-                .map { role -> SimpleGrantedAuthority("ROLE_$role") }
-                .collect(Collectors.toSet())
-        )
-    }
+    @Column(name = "delete_at", nullable = true)
+    var deleteAt: LocalDateTime? = null
 }

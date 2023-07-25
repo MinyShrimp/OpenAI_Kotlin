@@ -16,21 +16,4 @@ class WebConfigure : WebMvcConfigurer {
             .allowedMethods("*")
             .allowCredentials(true)
     }
-
-//    override fun addViewControllers(
-//        registry: ViewControllerRegistry
-//    ) {
-//        registry.addViewController("/")
-//        registry.setOrder(Ordered.HIGHEST_PRECEDENCE)
-//    }
-//
-//    override fun addResourceHandlers(
-//        registry: ResourceHandlerRegistry
-//    ) {
-//        registry.addResourceHandler("/**")
-//            .addResourceLocations(
-//                "classpath:/static/", "classpath:/public/", "classpath:/",
-//                "classpath:/resources/", "classpath:/META-INF/resources/", "classpath:/META-INF/resources/webjars/"
-//            )
-//    }
 }
