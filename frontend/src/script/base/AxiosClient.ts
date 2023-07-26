@@ -1,19 +1,25 @@
 import axios from 'axios';
 
 const defaultAxios = axios.create({
-    baseURL: import.meta.env.VITE_BACKEND_API_URL,
     headers: {
-        'Content-Type': 'application/json; chat-set=utf-8'
-    }
+        'Content-Type': 'application/json; chat-set=utf-8',
+    },
+    withCredentials: true
 });
 
-export const AxiosClient = () => {
+export const AxiosApiClient = () => {
     const openAiKey = localStorage.getItem("openAiKey");
     if (openAiKey) {
         defaultAxios.defaults.headers.common['Authorization'] = `Bearer ${openAiKey}`;
     } else {
         defaultAxios.defaults.headers.common['Authorization'] = "";
     }
+    defaultAxios.defaults.baseURL = import.meta.env.VITE_BACKEND_API_URL + "/api";
 
+    return defaultAxios;
+}
+
+export const AxiosAuthClient = () => {
+    defaultAxios.defaults.baseURL = import.meta.env.VITE_BACKEND_API_URL + "/auth";
     return defaultAxios;
 }

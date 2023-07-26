@@ -1,7 +1,7 @@
 import {useRecoilState} from "recoil";
 import {ContextState, IPrompt, NowContextIdState} from "../../../states/context";
 import {useQuery} from "react-query";
-import {AxiosClient} from "../../../base/AxiosClient";
+import {AxiosApiClient} from "../../../base/AxiosClient";
 import {HistoryResponse} from "./dto/HistoryResponse";
 
 export function GetHistoryList(
@@ -39,7 +39,7 @@ export function GetHistoryList(
         async () => {
             if (nowContextId === "") return [];
 
-            const resp = await AxiosClient().get("/context/" + nowContextId + "/history");
+            const resp = await AxiosApiClient().get("/context/" + nowContextId + "/history");
             return resp.data;
         },
         {

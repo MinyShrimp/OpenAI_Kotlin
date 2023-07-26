@@ -1,8 +1,7 @@
 import {useMemo, useState} from "react";
 import {Box, createTheme, ThemeProvider} from "@mui/material";
-
-import MainLeftLayer from "./main/MainLeftLayer";
-import MainRightLayer from "./main/MainRightLayer";
+import {MainLayer} from "./main/MainLayer";
+import {AuthLayer} from "./login/AuthLayer";
 
 export default function App() {
     const [darkMode, setDarkMode] = useState(localStorage.getItem("darkMode") === "1");
@@ -26,16 +25,19 @@ export default function App() {
         setDarkMode(changeDarkMode);
     };
 
+    const isLogin = false;
+
     return (
         <ThemeProvider theme={theme}>
             <Box sx={{
                 bgcolor: "background.default",
-                color: "text.primary",
-                display: "flex",
-                flexDirection: "row",
+                color: "text.primary"
             }}>
-                <MainLeftLayer darkMode={darkMode} darkModeHandler={darkModeHandler}/>
-                <MainRightLayer/>
+                {
+                    isLogin
+                        ? <MainLayer darkMode={darkMode} darkModeHandler={darkModeHandler}/>
+                        : <AuthLayer/>
+                }
             </Box>
         </ThemeProvider>
     );

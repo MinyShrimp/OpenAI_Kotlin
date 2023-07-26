@@ -1,6 +1,6 @@
 import {useMutation} from "react-query";
 import {ContextState, IPrompt, NowContextIdState} from "../../../states/context";
-import {AxiosClient} from "../../../base/AxiosClient";
+import {AxiosApiClient} from "../../../base/AxiosClient";
 import {HistoryRequest} from "./dto/HistoryRequest";
 import {useRecoilState} from "recoil";
 import {HistoryResponse} from "./dto/HistoryResponse";
@@ -22,7 +22,7 @@ export function AddHistory() {
 
     return useMutation(
         async (prompt: IPrompt) => {
-            const resp = await AxiosClient().post("/context/history/add", getRequest(prompt));
+            const resp = await AxiosApiClient().post("/context/history/add", getRequest(prompt));
             return resp.data;
         }, {
             onSuccess: async (data: HistoryResponse) => {

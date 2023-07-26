@@ -4,7 +4,7 @@ import {useRecoilState} from "recoil";
 import {Grid} from "@mui/material";
 import {DataGrid} from '@mui/x-data-grid';
 
-import {AxiosClient} from "../base/AxiosClient";
+import {AxiosApiClient} from "../base/AxiosClient";
 import {ModelToolbar} from "./ModelToolbar";
 import {Model, ModelListState} from "../states/model";
 
@@ -26,7 +26,7 @@ export function ModelViewerLayer(): JSX.Element {
         if (models.length > 0) {
             setShowModels(models);
         } else {
-            AxiosClient()
+            AxiosApiClient()
                 .get("/model/list")
                 .then((response) => initModelList(response.data))
                 .finally(() => {

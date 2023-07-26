@@ -1,5 +1,5 @@
 import {useQuery} from "react-query";
-import {AxiosClient} from "../../../base/AxiosClient";
+import {AxiosApiClient} from "../../../base/AxiosClient";
 
 import {useRecoilState} from "recoil";
 import {CHAT_MODEL, ContextState, NowContextIdState} from "../../../states/context";
@@ -32,7 +32,7 @@ export function GetContextList() {
     return useQuery(
         "GetContextList",
         async () => {
-            const resp = await AxiosClient().get("/context");
+            const resp = await AxiosApiClient().get("/context");
             return resp.data;
         },
         {

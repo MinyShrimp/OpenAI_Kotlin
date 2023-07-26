@@ -1,7 +1,7 @@
 import {useMutation, useQueryClient} from "react-query";
 import {IContext} from "../../../states/context";
 import {ContextRequest} from "./dto/ContextRequest";
-import {AxiosClient} from "../../../base/AxiosClient";
+import {AxiosApiClient} from "../../../base/AxiosClient";
 
 export function UpdateContext() {
     const queryClient = useQueryClient();
@@ -20,7 +20,7 @@ export function UpdateContext() {
 
     return useMutation(
         async (context: IContext) => {
-            const resp = await AxiosClient().put("/context", getRequest(context));
+            const resp = await AxiosApiClient().put("/context", getRequest(context));
             return resp.data;
         }, {
             onSuccess: async (data) => {

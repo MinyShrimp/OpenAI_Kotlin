@@ -1,5 +1,5 @@
 import {useQuery} from "react-query";
-import {AxiosClient} from "../../../base/AxiosClient";
+import {AxiosApiClient} from "../../../base/AxiosClient";
 import {useRecoilState} from "recoil";
 import {ContextState, IPrompt, NowContextIdState} from "../../../states/context";
 import {PrePromptResponse} from "./dto/PrePromptResponse";
@@ -39,7 +39,7 @@ export function GetPrePrompt() {
     return useQuery(
         "GetPrePrompt",
         async () => {
-            const resp = await AxiosClient().get("/context/" + nowContextId + "/prompt");
+            const resp = await AxiosApiClient().get("/context/" + nowContextId + "/prompt");
             return resp.data;
         },
         {

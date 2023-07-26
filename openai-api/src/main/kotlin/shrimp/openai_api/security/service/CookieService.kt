@@ -22,8 +22,9 @@ class CookieService {
         return Cookie(COOKIE_NAME, token)
             .apply {
                 path = "/"
-                secure = true
                 isHttpOnly = true
+                secure = true
+                setAttribute("SameSite", "None")
             }
     }
 
@@ -32,8 +33,9 @@ class CookieService {
             .apply {
                 path = "/"
                 maxAge = 0
-                secure = true
                 isHttpOnly = true
+                secure = true
+                setAttribute("SameSite", "None")
             }
     }
 }
