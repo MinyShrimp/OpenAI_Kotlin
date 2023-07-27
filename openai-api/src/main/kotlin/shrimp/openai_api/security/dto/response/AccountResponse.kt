@@ -1,4 +1,4 @@
-package shrimp.openai_api.security.dto
+package shrimp.openai_api.security.dto.response
 
 import shrimp.openai_api.security.entity.Account
 import shrimp.openai_api.security.entity.AccountRole
