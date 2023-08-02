@@ -12,9 +12,7 @@ import org.springframework.web.reactive.function.client.WebClientException
 class WebClientAspect(
     private val retryTemplate: RetryTemplate
 ) {
-    @Around(
-        "execution(* org.springframework.web.reactive.function.client.DefaultWebClient.methodInternal(..))"
-    )
+    @Around("execution(* shrimp.openai_core.api.*.service..*(..))")
     fun aroundWebClientUtils(
         joinPoint: ProceedingJoinPoint
     ): Any {
