@@ -12,12 +12,14 @@ dependencyManagement {
 }
 
 dependencies {
-    // WebClient
-    implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
+    // Spring
+    implementation("org.springframework.retry:spring-retry")
+    implementation("org.springframework.boot:spring-boot-starter-aop")
     implementation("org.springframework.boot:spring-boot-starter-webflux")
 
-    // other
+    // Other
     implementation("com.knuddels:jtokkit:0.6.1")
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 
     // Test
     testImplementation("io.mockk:mockk:1.13.4")

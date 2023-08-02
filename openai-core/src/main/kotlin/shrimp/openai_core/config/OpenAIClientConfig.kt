@@ -14,6 +14,7 @@ import org.springframework.web.reactive.function.client.ExchangeStrategies
 import org.springframework.web.reactive.function.client.WebClient
 import shrimp.openai_core.base.OpenAIClient
 
+
 /**
  * OpenAI와 통신을 위한 WebClient 객체의 기본 설정
  *

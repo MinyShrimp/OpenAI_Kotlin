@@ -6,6 +6,7 @@ import shrimp.openai_core.api.edit.request.EditRequest
 import shrimp.openai_core.api.edit.response.EditResponse
 import shrimp.openai_core.base.OpenAIClient
 import shrimp.openai_core.base.OpenAIOption
+import shrimp.openai_core.utility.body
 
 /**
  * Edit API Service
@@ -18,7 +19,6 @@ import shrimp.openai_core.base.OpenAIOption
 class EditService(
     private val openAIClient: OpenAIClient
 ) {
-
     /**
      * POST /edits. Async.
      */
@@ -27,10 +27,8 @@ class EditService(
         option: OpenAIOption? = null
     ): Mono<EditResponse> {
         return openAIClient(option)
-            .post()
-            .uri("/edits")
-            .body(Mono.just(request), EditRequest::class.java)
-            .retrieve()
+            .post().uri("/edits")
+            .body(Mono.just(request)).retrieve()
             .bodyToMono(EditResponse::class.java)
     }
 

@@ -3,8 +3,7 @@ package shrimp.openai_core.base
 import org.springframework.web.reactive.function.client.WebClient
 
 /**
- * OpenAI와 통신을 위한 WebClient 객체를 감싸
- * OpenAI API 만을 위한 WebClient 객체를 반환하는 클래스
+ * OpenAI와 통신을 위한 WebClient 객체를 감싸는 클래스
  *
  * @author 김회민
  * @since 2023-03-26

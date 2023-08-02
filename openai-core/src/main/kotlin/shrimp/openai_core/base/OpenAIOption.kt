@@ -4,6 +4,6 @@ data class OpenAIOption(
     val apiKey: String
 ) {
     fun getAuthorization(): Pair<String, String> {
-        return Pair("Authorization", "Bearer ${this.apiKey}");
+        return Pair("Authorization", "Bearer ${this.apiKey}")
     }
 }

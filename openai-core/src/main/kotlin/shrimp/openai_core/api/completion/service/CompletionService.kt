@@ -3,7 +3,6 @@ package shrimp.openai_core.api.completion.service
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import org.springframework.stereotype.Service
-import org.springframework.web.reactive.function.client.WebClient
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 import shrimp.openai_core.api.completion.request.ChatCompletionRequest
@@ -12,6 +11,7 @@ import shrimp.openai_core.api.completion.response.ChatCompletionResponse
 import shrimp.openai_core.api.completion.response.CompletionResponse
 import shrimp.openai_core.base.OpenAIClient
 import shrimp.openai_core.base.OpenAIOption
+import shrimp.openai_core.utility.body
 
 /**
  * Completion API Service
@@ -29,48 +29,11 @@ class CompletionService(
     private val openAIClient: OpenAIClient,
     private val objectMapper: ObjectMapper
 ) {
+    private val completionUri: String = "/completions"
+    private val chatCompletionUri: String = "/chat/completions"
 
-    /**
-     * POST /completions
-     * - 공통 부분 추출
-     */
-    private fun postCompletionResponseSpec(
-        request: CompletionRequest,
-        option: OpenAIOption?
-    ): WebClient.ResponseSpec {
-        return openAIClient(option)
-            .post()
-            .uri("/completions")
-            .body(Mono.just(request), CompletionRequest::class.java)
-            .retrieve()
-    }
-
-    /**
-     * POST /chat/completions
-     * - 공통 부분 추출
-     */
-    private fun postChatCompletionResponseSpec(
-        request: ChatCompletionRequest,
-        option: OpenAIOption?
-    ): WebClient.ResponseSpec {
-        return openAIClient(option)
-            .post()
-            .uri("/chat/completions")
-            .body(Mono.just(request), ChatCompletionRequest::class.java)
-            .retrieve()
-    }
-
-    /**
-     * Streaming Response
-     * - 공통 부분 추출
-     */
-    private inline fun <reified T> fluxResponse(
-        responseSpec: WebClient.ResponseSpec
-    ): Flux<T> {
-        return responseSpec
-            .bodyToFlux(String::class.java)
-            .filter { it != "[DONE]" }
-            .map { objectMapper.readValue<T>(it) }
+    private inline fun <reified T> Flux<String>.convert(): Flux<T> {
+        return this.filter { it != "[DONE]" }.map { objectMapper.readValue<T>(it) }
     }
 
     /**
@@ -80,7 +43,9 @@ class CompletionService(
         request: CompletionRequest,
         option: OpenAIOption? = null
     ): Mono<CompletionResponse> {
-        return postCompletionResponseSpec(request, option)
+        return openAIClient(option)
+            .post().uri(completionUri)
+            .body(Mono.just(request)).retrieve()
             .bodyToMono(CompletionResponse::class.java)
     }
 
@@ -91,9 +56,10 @@ class CompletionService(
         request: CompletionRequest,
         option: OpenAIOption? = null
     ): Flux<CompletionResponse> {
-        return fluxResponse<CompletionResponse>(
-            postCompletionResponseSpec(request, option)
-        )
+        return openAIClient(option)
+            .post().uri(completionUri)
+            .body(Mono.just(request)).retrieve()
+            .bodyToFlux(String::class.java).convert()
     }
 
     /**
@@ -113,7 +79,9 @@ class CompletionService(
         request: ChatCompletionRequest,
         option: OpenAIOption? = null
     ): Mono<ChatCompletionResponse> {
-        return postChatCompletionResponseSpec(request, option)
+        return openAIClient(option)
+            .post().uri(chatCompletionUri)
+            .body(Mono.just(request)).retrieve()
             .bodyToMono(ChatCompletionResponse::class.java)
     }
 
@@ -124,9 +92,10 @@ class CompletionService(
         request: ChatCompletionRequest,
         option: OpenAIOption? = null
     ): Flux<ChatCompletionResponse> {
-        return fluxResponse<ChatCompletionResponse>(
-            postChatCompletionResponseSpec(request, option)
-        )
+        return openAIClient(option)
+            .post().uri(chatCompletionUri)
+            .body(Mono.just(request)).retrieve()
+            .bodyToFlux(String::class.java).convert()
     }
 
     /**

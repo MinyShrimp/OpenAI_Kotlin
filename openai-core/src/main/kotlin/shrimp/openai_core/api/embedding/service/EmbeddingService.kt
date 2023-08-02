@@ -6,6 +6,7 @@ import shrimp.openai_core.api.embedding.request.EmbeddingRequest
 import shrimp.openai_core.api.embedding.response.EmbeddingResponse
 import shrimp.openai_core.base.OpenAIClient
 import shrimp.openai_core.base.OpenAIOption
+import shrimp.openai_core.utility.body
 
 /**
  * Embeddings API Service
@@ -19,7 +20,6 @@ import shrimp.openai_core.base.OpenAIOption
 class EmbeddingService(
     private val openAIClient: OpenAIClient
 ) {
-
     /**
      * POST /embeddings. Async.
      */
@@ -28,10 +28,8 @@ class EmbeddingService(
         option: OpenAIOption? = null
     ): Mono<EmbeddingResponse> {
         return openAIClient(option)
-            .post()
-            .uri("/embeddings")
-            .body(Mono.just(request), EmbeddingRequest::class.java)
-            .retrieve()
+            .post().uri("/embeddings")
+            .body(Mono.just(request)).retrieve()
             .bodyToMono(EmbeddingResponse::class.java)
     }
 

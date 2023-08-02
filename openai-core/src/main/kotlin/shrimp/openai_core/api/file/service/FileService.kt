@@ -29,9 +29,7 @@ class FileService(
         option: OpenAIOption? = null
     ): Mono<FileListResponse> {
         return openAIClient(option)
-            .get()
-            .uri("/files")
-            .retrieve()
+            .get().uri("/files").retrieve()
             .bodyToMono(FileListResponse::class.java)
     }
 
@@ -52,9 +50,7 @@ class FileService(
         option: OpenAIOption? = null
     ): Mono<FileResponse> {
         return openAIClient(option)
-            .get()
-            .uri("/files/$id")
-            .retrieve()
+            .get().uri("/files/$id").retrieve()
             .bodyToMono(FileResponse::class.java)
     }
 
@@ -76,9 +72,7 @@ class FileService(
         option: OpenAIOption? = null
     ): Mono<String> {
         return openAIClient(option)
-            .get()
-            .uri("/files/$id/content")
-            .retrieve()
+            .get().uri("/files/$id/content").retrieve()
             .bodyToMono(String::class.java)
     }
 
@@ -100,11 +94,9 @@ class FileService(
         option: OpenAIOption? = null
     ): Mono<FileResponse> {
         return openAIClient(option)
-            .post()
-            .uri("/files")
+            .post().uri("/files")
             .contentType(MediaType.MULTIPART_FORM_DATA)
-            .body(request.multipartBody)
-            .retrieve()
+            .body(request.multipartBody).retrieve()
             .bodyToMono(FileResponse::class.java)
     }
 
@@ -126,9 +118,7 @@ class FileService(
         option: OpenAIOption? = null
     ): Mono<FileDeleteResponse> {
         return openAIClient(option)
-            .delete()
-            .uri("/files/$id")
-            .retrieve()
+            .delete().uri("/files/$id").retrieve()
             .bodyToMono(FileDeleteResponse::class.java)
     }
 

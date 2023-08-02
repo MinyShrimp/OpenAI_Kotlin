@@ -7,6 +7,7 @@ import shrimp.openai_core.api.finetune.response.FineTuneListResponse
 import shrimp.openai_core.api.finetune.response.FineTuneResponse
 import shrimp.openai_core.base.OpenAIClient
 import shrimp.openai_core.base.OpenAIOption
+import shrimp.openai_core.utility.body
 
 /**
  * Fine-Tunings API Service
@@ -27,9 +28,7 @@ class FineTuneService(
         option: OpenAIOption? = null
     ): Mono<FineTuneListResponse> {
         return openAIClient(option)
-            .get()
-            .uri("/fine-tunes")
-            .retrieve()
+            .get().uri("/fine-tunes").retrieve()
             .bodyToMono(FineTuneListResponse::class.java)
     }
 
@@ -50,9 +49,7 @@ class FineTuneService(
         option: OpenAIOption? = null
     ): Mono<FineTuneResponse> {
         return openAIClient(option)
-            .get()
-            .uri("/fine-tunes/$id")
-            .retrieve()
+            .get().uri("/fine-tunes/$id").retrieve()
             .bodyToMono(FineTuneResponse::class.java)
     }
 
@@ -74,9 +71,7 @@ class FineTuneService(
         option: OpenAIOption? = null
     ): Mono<FineTuneEventListResponse> {
         return openAIClient(option)
-            .get()
-            .uri("/fine-tunes/$id/events")
-            .retrieve()
+            .get().uri("/fine-tunes/$id/events").retrieve()
             .bodyToMono(FineTuneEventListResponse::class.java)
     }
 
@@ -98,10 +93,8 @@ class FineTuneService(
         option: OpenAIOption? = null
     ): Mono<FineTuneResponse> {
         return openAIClient(option)
-            .post()
-            .uri("/fine-tunes")
-            .body(Mono.just(request), FineTuneCreateRequest::class.java)
-            .retrieve()
+            .post().uri("/fine-tunes")
+            .body(Mono.just(request)).retrieve()
             .bodyToMono(FineTuneResponse::class.java)
     }
 
@@ -123,9 +116,7 @@ class FineTuneService(
         option: OpenAIOption? = null
     ): Mono<FineTuneResponse> {
         return openAIClient(option)
-            .post()
-            .uri("/fine-tunes/$id/cancel")
-            .retrieve()
+            .post().uri("/fine-tunes/$id/cancel").retrieve()
             .bodyToMono(FineTuneResponse::class.java)
     }
 

@@ -6,6 +6,7 @@ import shrimp.openai_core.api.moderation.request.ModerationRequest
 import shrimp.openai_core.api.moderation.response.ModerationResponse
 import shrimp.openai_core.base.OpenAIClient
 import shrimp.openai_core.base.OpenAIOption
+import shrimp.openai_core.utility.body
 
 /**
  * Moderation API Service
@@ -19,7 +20,7 @@ import shrimp.openai_core.base.OpenAIOption
  */
 @Service
 class ModerationService(
-    private val client: OpenAIClient
+    private val openAIClient: OpenAIClient
 ) {
 
     /**
@@ -29,11 +30,9 @@ class ModerationService(
         request: ModerationRequest,
         option: OpenAIOption? = null
     ): Mono<ModerationResponse> {
-        return client(option)
-            .post()
-            .uri("/moderations")
-            .body(Mono.just(request), ModerationRequest::class.java)
-            .retrieve()
+        return openAIClient(option)
+            .post().uri("/moderations")
+            .body(Mono.just(request)).retrieve()
             .bodyToMono(ModerationResponse::class.java)
     }
 

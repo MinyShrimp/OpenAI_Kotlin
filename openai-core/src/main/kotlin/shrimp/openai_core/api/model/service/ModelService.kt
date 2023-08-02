@@ -27,9 +27,7 @@ class ModelService(
         option: OpenAIOption? = null
     ): Mono<ModelListResponse> {
         return openAIClient(option)
-            .get()
-            .uri("/models")
-            .retrieve()
+            .get().uri("/models").retrieve()
             .bodyToMono(ModelListResponse::class.java)
     }
 
@@ -50,9 +48,7 @@ class ModelService(
         option: OpenAIOption? = null
     ): Mono<ModelResponse> {
         return openAIClient(option)
-            .get()
-            .uri("/models/$modelName")
-            .retrieve()
+            .get().uri("/models/$modelName").retrieve()
             .bodyToMono(ModelResponse::class.java)
     }
 
