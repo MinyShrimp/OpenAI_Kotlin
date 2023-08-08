@@ -1,7 +1,9 @@
-import {useMemo, useState} from "react";
+import {useEffect, useMemo, useState} from "react";
 import {Box, createTheme, ThemeProvider} from "@mui/material";
 import {MainLayer} from "./main/MainLayer";
 import {AuthLayer} from "./login/AuthLayer";
+import {getCookie} from "./base/Cookie";
+import {AxiosApiClient} from "./base/AxiosClient";
 
 export default function App() {
     const [darkMode, setDarkMode] = useState(localStorage.getItem("darkMode") === "1");
@@ -25,7 +27,15 @@ export default function App() {
         setDarkMode(changeDarkMode);
     };
 
-    const isLogin = false;
+    const [isLogin, setIsLogin] = useState(false);
+    useEffect(() => {
+        const cookie = getCookie("AUTH_TOKEN");
+        if (cookie !== undefined) {
+            AxiosApiClient()
+                .get("/model/list")
+                .then(() => setIsLogin(true));
+        }
+    }, []);
 
     return (
         <ThemeProvider theme={theme}>
