@@ -22,6 +22,7 @@ import shrimp.openai_core.base.OpenAIClient
  * @since 2023-03-25
  */
 @Configuration
+@Import(RetryConfig::class)
 @ComponentScan(basePackages = ["shrimp.openai_core"])
 open class OpenAIClientConfig(
     private val env: Environment

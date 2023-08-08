@@ -9,9 +9,9 @@ import org.springframework.retry.support.RetryTemplate
 
 @EnableRetry
 @Configuration
-open class RetryConfig {
+class RetryConfig {
     @Bean
-    open fun retryTemplate(): RetryTemplate {
+    fun retryTemplate(): RetryTemplate {
         val backoff = FixedBackOffPolicy().apply { backOffPeriod = 5000L }
         val retryPolicy = SimpleRetryPolicy(10)
 

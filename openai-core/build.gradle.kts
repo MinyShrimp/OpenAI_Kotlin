@@ -2,6 +2,7 @@ plugins {
     `java-library`
     id("io.spring.dependency-management")
     kotlin("jvm")
+    kotlin("plugin.spring")
 }
 
 dependencyManagement {
@@ -9,6 +10,10 @@ dependencyManagement {
         val springBootVersion: String by project
         mavenBom("org.springframework.boot:spring-boot-dependencies:${springBootVersion}")
     }
+}
+
+allOpen {
+    annotation("org.springframework.stereotype.Service")
 }
 
 dependencies {
