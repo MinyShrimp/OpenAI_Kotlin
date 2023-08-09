@@ -10,6 +10,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
 import shrimp.openai_api.security.filter.AuthTokenFilter
 import shrimp.openai_api.security.filter.ExceptionHandlerFilter
 import shrimp.openai_api.security.service.AccountSessionService
+import shrimp.openai_api.security.service.CookieService
 
 @Configuration
 class WebSecurityConfig : WebMvcConfigurer {
@@ -20,10 +21,11 @@ class WebSecurityConfig : WebMvcConfigurer {
 
     @Bean
     fun exceptionFilter(
-        objectMapper: ObjectMapper
+        objectMapper: ObjectMapper,
+        cookieService: CookieService
     ): FilterRegistrationBean<ExceptionHandlerFilter> {
         val registration = FilterRegistrationBean(
-            ExceptionHandlerFilter(objectMapper)
+            ExceptionHandlerFilter(objectMapper, cookieService)
         )
         registration.order = 1
         registration.addUrlPatterns("/api/*", "/auth/login/check", "/auth/logout")

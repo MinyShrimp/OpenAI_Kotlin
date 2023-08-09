@@ -4,12 +4,10 @@ import {Signup} from "./api/Signup";
 import {NameInputForm} from "./components/NameInputForm";
 import {EmailInputForm} from "./components/EmailInputForm";
 import {PasswordInputForm} from "./components/PasswordInputForm";
+import {useRecoilState} from "recoil";
+import {LoginContextState} from "../states/auth";
 
-export function SignupForm(
-    props: {
-        setAuthPage: (page: string) => void,
-    }
-): JSX.Element {
+export function SignupForm(): JSX.Element {
     const [name, setName] = useState("");
     const [email, setEmail] = useState("");
     const [pwd, setPwd] = useState("");
@@ -22,6 +20,8 @@ export function SignupForm(
         setName("");
         setEmail("");
     }, []);
+
+    const [, setLoginContext] = useRecoilState(LoginContextState)
 
     const submitHandler = () => {
         for (let handler of validationHandlers.current.values()) {
@@ -75,7 +75,7 @@ export function SignupForm(
                         fullWidth
                         variant="contained"
                         color="success"
-                        onClick={() => props.setAuthPage("login")}
+                        onClick={() => setLoginContext("login")}
                     >로그인 페이지</Button>
                 </Grid>
             </CardContent>

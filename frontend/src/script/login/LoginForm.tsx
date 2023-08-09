@@ -3,12 +3,10 @@ import {Button, Card, CardContent, CardHeader, Checkbox, FormControlLabel, Grid}
 import {Login} from "./api/Login";
 import {EmailInputForm} from "./components/EmailInputForm";
 import {PasswordInputForm} from "./components/PasswordInputForm";
+import {useRecoilState} from "recoil";
+import {LoginContextState} from "../states/auth";
 
-export function LoginForm(
-    props: {
-        setAuthPage: (page: string) => void,
-    }
-): JSX.Element {
+export function LoginForm(): JSX.Element {
     const [pwd, setPwd] = useState("");
     const [email, setEmail] = useState("");
     const [rememberMe, setRememberMe] = useState(localStorage.getItem("rememberMe") === "1");
@@ -21,13 +19,15 @@ export function LoginForm(
         setEmail("");
     }, []);
 
+    const [, setLoginContext] = useRecoilState(LoginContextState);
+
     const submitHandler = () => {
         for (let handler of validationHandlers.current.values()) {
             if (!handler()) {
                 return;
             }
         }
-        
+
         loginMutation.mutate({
             email: email,
             password: pwd,
@@ -80,7 +80,7 @@ export function LoginForm(
                             fullWidth
                             variant="contained"
                             color="success"
-                            onClick={() => props.setAuthPage("signup")}
+                            onClick={() => setLoginContext("signup")}
                         >회원가입</Button>
                     </Grid>
                 </Grid>

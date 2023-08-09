@@ -9,9 +9,11 @@ import jakarta.servlet.http.HttpServletResponse
 import org.springframework.http.HttpStatus
 import shrimp.openai_api.security.dto.error.ErrorResponse
 import shrimp.openai_api.security.exception.AuthorizationException
+import shrimp.openai_api.security.service.CookieService
 
 class ExceptionHandlerFilter(
-    private val objectMapper: ObjectMapper
+    private val objectMapper: ObjectMapper,
+    private val cookieService: CookieService
 ) : Filter {
     override fun doFilter(
         request: ServletRequest,
@@ -25,6 +27,7 @@ class ExceptionHandlerFilter(
         } catch (e: AuthorizationException) {
             resp.status = HttpStatus.UNAUTHORIZED.value()
             resp.contentType = "application/json; charset=utf-8"
+            resp.addCookie(this.cookieService.deleteCookie())
 
             val errorResp = ErrorResponse(
                 HttpStatus.UNAUTHORIZED.value(),

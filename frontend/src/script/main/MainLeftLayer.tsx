@@ -1,9 +1,8 @@
 import {JSX, useState} from "react";
 import {Box, Container, Divider, Grid, IconButton, Typography} from "@mui/material";
-import {Brightness4, Brightness7} from "@mui/icons-material";
 
-import {faGear} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faGear, faRightFromBracket} from "@fortawesome/free-solid-svg-icons";
 
 import {MenuLayer} from "../menu/MenuLayer";
 import {OptionModalLayer} from "../option/OptionModalLayer";
@@ -11,13 +10,9 @@ import {ContextListLayer} from "../chat_completion/components/context_list/Conte
 
 import {useRecoilState} from "recoil";
 import {LEFT_STATE, LeftMenuState} from "../states/left_state";
+import {Logout} from "../login/api/Logout";
 
-export default function MainLeftLayer(
-    props: {
-        darkMode: boolean,
-        darkModeHandler: () => void
-    }
-): JSX.Element {
+export default function MainLeftLayer(): JSX.Element {
     const [optionModalOpen, setOptionModalOpen] = useState<boolean>(false);
     const optionModalCloseHandler = (): void => {
         setOptionModalOpen(false);
@@ -32,6 +27,11 @@ export default function MainLeftLayer(
             default:
                 return <MenuLayer/>;
         }
+    }
+
+    const logoutMutation = Logout();
+    const logoutHandler = (): void => {
+        logoutMutation.mutate();
     }
 
     return (
@@ -79,18 +79,15 @@ export default function MainLeftLayer(
                 </Grid>
                 <Grid item xs={2} display="flex" alignContent="center">
                     <IconButton
-                        onClick={props.darkModeHandler}
-                        color="inherit"
-                    >
-                        {props.darkMode ? <Brightness7/> : <Brightness4/>}
-                    </IconButton>
-                </Grid>
-                <Grid item xs={2} display="flex" alignContent="center">
-                    <IconButton
                         onClick={() => setOptionModalOpen(true)}
                         color="inherit"
                     >
                         <FontAwesomeIcon icon={faGear}/>
+                    </IconButton>
+                </Grid>
+                <Grid item xs={2} display="flex" alignContent="center">
+                    <IconButton onClick={logoutHandler}>
+                        <FontAwesomeIcon icon={faRightFromBracket}/>
                     </IconButton>
                 </Grid>
             </Grid>

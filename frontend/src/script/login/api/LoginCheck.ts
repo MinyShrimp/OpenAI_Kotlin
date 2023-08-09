@@ -1,16 +1,16 @@
-import {useMutation} from "react-query";
-import {AxiosAuthClient} from "../../base/AxiosClient";
-import {AuthResponse, LoginRequest} from "../dto/AuthTypes";
 import {useRecoilState} from "recoil";
 import {AccountInfoState, LoginState} from "../../states/auth";
+import {useMutation} from "react-query";
+import {AxiosAuthClient} from "../../base/AxiosClient";
+import {AuthResponse} from "../dto/AuthTypes";
 
-export function Login() {
+export function LoginCheck() {
     const [, setIsLogin] = useRecoilState(LoginState);
     const [, setAccountInfo] = useRecoilState(AccountInfoState);
 
     return useMutation(
-        async (dto: LoginRequest) => {
-            const resp = await AxiosAuthClient().post("/login", dto);
+        async () => {
+            const resp = await AxiosAuthClient().get("/login/check");
             return resp.data;
         }, {
             onSuccess: async (dto: AuthResponse) => {

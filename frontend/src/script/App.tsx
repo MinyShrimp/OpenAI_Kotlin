@@ -1,42 +1,40 @@
-import {useEffect, useMemo, useState} from "react";
+import {useEffect, useMemo} from "react";
 import {Box, createTheme, ThemeProvider} from "@mui/material";
 import {MainLayer} from "./main/MainLayer";
 import {AuthLayer} from "./login/AuthLayer";
 import {getCookie} from "./base/Cookie";
-import {AxiosAuthClient} from "./base/AxiosClient";
 import {useRecoilState} from "recoil";
 import {LoginState} from "./states/auth";
+import {LoginCheck} from "./login/api/LoginCheck";
+import {LightModeState} from "./states/config";
 
 export default function App() {
-    const [darkMode, setDarkMode] = useState(localStorage.getItem("darkMode") === "1");
+    const [lightMode,] = useRecoilState(LightModeState);
+    useEffect(() => {
+        localStorage.setItem("lightMode", lightMode ? "1" : "0");
+    }, [lightMode]);
+
     const theme = useMemo(
         () =>
             createTheme({
                 palette: {
-                    mode: darkMode ? 'dark' : 'light',
+                    mode: lightMode ? 'light' : 'dark',
                     background: {
-                        default: darkMode ? "#424242" : "#fff",
-                        paper: darkMode ? "#303030" : "#D3D3D3",
+                        default: lightMode ? "#fff" : "#424242",
+                        paper: lightMode ? "#D3D3D3" : "#303030",
                     }
                 },
             }),
-        [darkMode],
+        [lightMode],
     );
 
-    const darkModeHandler = (): void => {
-        const changeDarkMode = !darkMode;
-        localStorage.setItem("darkMode", changeDarkMode ? "1" : "0");
-        setDarkMode(changeDarkMode);
-    };
-
+    const loginMutation = LoginCheck();
     const [isLogin, setIsLogin] = useRecoilState(LoginState);
+
     useEffect(() => {
         const cookie = getCookie("AUTH_TOKEN");
         if (cookie !== undefined) {
-            AxiosAuthClient()
-                .get("/login/check")
-                .then(() => setIsLogin(true))
-                .catch(() => setIsLogin(false));
+            loginMutation.mutate();
         } else {
             setIsLogin(false);
         }
@@ -48,11 +46,7 @@ export default function App() {
                 bgcolor: "background.default",
                 color: "text.primary"
             }}>
-                {
-                    isLogin
-                        ? <MainLayer darkMode={darkMode} darkModeHandler={darkModeHandler}/>
-                        : <AuthLayer/>
-                }
+                {isLogin ? <MainLayer/> : <AuthLayer/>}
             </Box>
         </ThemeProvider>
     );

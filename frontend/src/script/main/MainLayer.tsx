@@ -2,12 +2,7 @@ import MainLeftLayer from "./MainLeftLayer";
 import MainRightLayer from "./MainRightLayer";
 import {Box} from "@mui/material";
 
-export function MainLayer(
-    props: {
-        darkMode: boolean,
-        darkModeHandler: () => void,
-    }
-) {
+export function MainLayer() {
     return (
         <Box
             sx={{
@@ -15,7 +10,7 @@ export function MainLayer(
                 flexDirection: "row",
             }}
         >
-            <MainLeftLayer darkMode={props.darkMode} darkModeHandler={props.darkModeHandler}/>
+            <MainLeftLayer/>
             <MainRightLayer/>
         </Box>
     );

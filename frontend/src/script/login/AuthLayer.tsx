@@ -1,10 +1,12 @@
-import {JSX, useState} from "react";
+import {JSX} from "react";
 import {Container} from "@mui/material";
 import {LoginForm} from "./LoginForm";
 import {SignupForm} from "./SignupForm";
+import {useRecoilState} from "recoil";
+import {LoginContextState} from "../states/auth";
 
 export function AuthLayer(): JSX.Element {
-    const [authPage, setAuthPage] = useState("login");
+    const [loginContext,] = useRecoilState(LoginContextState);
 
     return (
         <Container
@@ -17,9 +19,9 @@ export function AuthLayer(): JSX.Element {
             }}
         >
             {
-                authPage === "login"
-                    ? <LoginForm setAuthPage={setAuthPage}/>
-                    : <SignupForm setAuthPage={setAuthPage}/>
+                loginContext === "login"
+                    ? <LoginForm/>
+                    : <SignupForm/>
             }
         </Container>
     );

@@ -8,13 +8,15 @@ import shrimp.openai_api.security.dto.request.LoginRequest
 import shrimp.openai_api.security.dto.request.SignupRequest
 import shrimp.openai_api.security.dto.response.AccountResponse
 import shrimp.openai_api.security.service.AccountService
+import shrimp.openai_api.security.service.AccountSessionService
 import shrimp.openai_api.security.service.CookieService
 
 @RestController
 @RequestMapping("/auth")
 class SecurityController(
     private val cookieService: CookieService,
-    private val accountService: AccountService
+    private val accountService: AccountService,
+    private val accountSessionService: AccountSessionService
 ) {
     private val logger = KotlinLogging.logger {}
 
@@ -39,8 +41,11 @@ class SecurityController(
     }
 
     @GetMapping("/login/check")
-    fun loginCheck() {
-        return;
+    fun loginCheck(
+        @CookieValue(CookieService.COOKIE_NAME) token: String
+    ): AccountResponse {
+        val account = this.accountSessionService.getAccountByToken(token)
+        return AccountResponse.of(account)
     }
 
     @PostMapping("/logout")
@@ -48,7 +53,7 @@ class SecurityController(
         @CookieValue(CookieService.COOKIE_NAME) token: String,
         response: HttpServletResponse
     ) {
-        val account = this.accountService.logoutAccount(token)
+        this.accountService.logoutAccount(token)
         response.addCookie(this.cookieService.deleteCookie())
     }
 }

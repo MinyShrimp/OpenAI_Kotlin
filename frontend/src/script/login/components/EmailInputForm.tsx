@@ -9,7 +9,7 @@ export function EmailInputForm(
     }
 ) {
     const validationCondition = () => {
-        return props.target.match(/^[a-zA-Z0-9]+@[a-zA-Z0-9]+\.[A-Za-z]+$/) !== null;
+        return props.target.match(/^[a-zA-Z0-9]+@[a-zA-Z0-9]+(\.[A-Za-z]+){1,2}$/) !== null;
     };
 
     return (
