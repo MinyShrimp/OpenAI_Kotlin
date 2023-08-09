@@ -3,7 +3,9 @@ import {Box, createTheme, ThemeProvider} from "@mui/material";
 import {MainLayer} from "./main/MainLayer";
 import {AuthLayer} from "./login/AuthLayer";
 import {getCookie} from "./base/Cookie";
-import {AxiosApiClient} from "./base/AxiosClient";
+import {AxiosAuthClient} from "./base/AxiosClient";
+import {useRecoilState} from "recoil";
+import {LoginState} from "./states/auth";
 
 export default function App() {
     const [darkMode, setDarkMode] = useState(localStorage.getItem("darkMode") === "1");
@@ -27,13 +29,16 @@ export default function App() {
         setDarkMode(changeDarkMode);
     };
 
-    const [isLogin, setIsLogin] = useState(false);
+    const [isLogin, setIsLogin] = useRecoilState(LoginState);
     useEffect(() => {
         const cookie = getCookie("AUTH_TOKEN");
         if (cookie !== undefined) {
-            AxiosApiClient()
-                .get("/model/list")
-                .then(() => setIsLogin(true));
+            AxiosAuthClient()
+                .get("/login/check")
+                .then(() => setIsLogin(true))
+                .catch(() => setIsLogin(false));
+        } else {
+            setIsLogin(false);
         }
     }, []);
 

@@ -12,11 +12,8 @@ export function Signup() {
                 console.log("signup", data);
             },
             onError: async (error: any) => {
-                console.log("SignupForm", error);
-                if (error.code === "ERR_BAD_REQUEST") {
-                    const msg = error.response.data.message
-                    alert(msg);
-                }
+                const msg = error.response.data.message;
+                console.error("signup", msg);
             }
         }
     )

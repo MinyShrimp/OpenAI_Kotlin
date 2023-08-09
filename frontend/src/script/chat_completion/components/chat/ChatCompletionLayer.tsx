@@ -97,7 +97,7 @@ export function ChatCompletionLayer(): JSX.Element {
         setMessage("");
         setPending(true);
 
-        const url = import.meta.env.VITE_BACKEND_API_URL + "/chat/stream";
+        const url = process.env.VITE_BACKEND_API_URL + "/chat/stream";
         const reqHeader = {
             Authorization: "Bearer " + (localStorage.getItem("openAiKey") ?? ""),
             "Content-Type": "application/json; charset=utf-8;"

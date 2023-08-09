@@ -2,39 +2,28 @@ import * as path from "path";
 import {defineConfig, loadEnv} from "vite";
 import react from "@vitejs/plugin-react";
 
-const mode = "development"; // "development" | "production"
+export default defineConfig(({mode}) => {
+    const env = loadEnv(mode, path.resolve(__dirname, "envs"));
+    const processEnvValues = {
+        'process.env': Object.entries(env)
+            .reduce((prev, [key, val]) => {
+                return {...prev, [key]: val}
+            }, {})
+    }
 
-export default defineConfig({
-    mode: mode,
-    root: path.resolve(__dirname, "src"),
-    publicDir: path.resolve(__dirname, "public"),
-    envDir: path.resolve(__dirname, "envs"),
-    build: {
-        outDir: path.resolve(__dirname, "dist"),
-    },
-    plugins: [react()],
-    resolve: {
-        alias: {
-            "~bootstrap": path.resolve(__dirname, "node_modules/bootstrap"),
+    return {
+        root: path.resolve(__dirname, "src"),
+        publicDir: path.resolve(__dirname, "public"),
+        build: {
+            outDir: path.resolve(__dirname, "dist"),
         },
-    },
-    server: {
-        port: 3000,
-        proxy: {
-            "/api": {
-                target: "http://localhost:8080",
-                changeOrigin: true,
+        plugins: [react()],
+        server: {port: 3000},
+        resolve: {
+            alias: {
+                "~bootstrap": path.resolve(__dirname, "node_modules/bootstrap"),
             },
-            "/auth": {
-                target: "http://localhost:8080",
-                changeOrigin: true,
-            }
-        }
-    },
-    define: {
-        __APP_ENV__: JSON.stringify(
-            loadEnv(mode, path.resolve(__dirname, "envs"), "")
-        ),
-        "process.env": process.env
-    },
+        },
+        define: processEnvValues
+    }
 });

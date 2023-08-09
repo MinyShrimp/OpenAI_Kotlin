@@ -20,11 +20,13 @@ class AuthTokenFilter(
     ) {
         val req = request as HttpServletRequest
 
-        val cookie = req.cookies.find { it.name == CookieService.COOKIE_NAME }
-            ?: throw AuthorizationException(ErrorCode.NoExistCookie)
+        if (req.method != "OPTIONS") {
+            val cookie = req.cookies?.find { it.name == CookieService.COOKIE_NAME }
+                ?: throw AuthorizationException(ErrorCode.NoExistCookie)
 
-        val account = this.accountSessionService.getAccountByToken(cookie.value)
-        if (!account.isLogin) throw AuthorizationException(ErrorCode.AlreadyLogout)
+            val account = this.accountSessionService.getAccountByToken(cookie.value)
+            if (!account.isLogin) throw AuthorizationException(ErrorCode.AlreadyLogout)
+        }
 
         chain.doFilter(request, response)
     }

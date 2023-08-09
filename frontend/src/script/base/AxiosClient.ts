@@ -14,14 +14,12 @@ export const AxiosApiClient = () => {
     } else {
         defaultAxios.defaults.headers.common['Authorization'] = "";
     }
-    // @ts-ignore
-    defaultAxios.defaults.baseURL = import.meta.env.VITE_BACKEND_API_URL + "/api";
+    defaultAxios.defaults.baseURL = process.env.VITE_BACKEND_API_URL + "/api";
 
     return defaultAxios;
 }
 
 export const AxiosAuthClient = () => {
-    // @ts-ignore
-    defaultAxios.defaults.baseURL = import.meta.env.VITE_BACKEND_API_URL + "/auth";
+    defaultAxios.defaults.baseURL = process.env.VITE_BACKEND_API_URL + "/auth";
     return defaultAxios;
 }

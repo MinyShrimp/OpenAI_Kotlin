@@ -38,6 +38,11 @@ class SecurityController(
         return AccountResponse.of(account)
     }
 
+    @GetMapping("/login/check")
+    fun loginCheck() {
+        return;
+    }
+
     @PostMapping("/logout")
     fun logout(
         @CookieValue(CookieService.COOKIE_NAME) token: String,

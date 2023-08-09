@@ -16,26 +16,36 @@ class CookieService {
         return this.generator.generateSessionId()
     }
 
+    private fun setHttpCookie(
+        cookie: Cookie
+    ): Cookie {
+        return cookie.apply {
+            path = "/"
+            isHttpOnly = false
+            secure = false
+        }
+    }
+
+    private fun setHttpsCookie(
+        cookie: Cookie
+    ): Cookie {
+        return cookie.apply {
+            path = "/"
+            isHttpOnly = true
+            secure = true
+            setAttribute("SameSite", "None")
+        }
+    }
+
     fun getCookie(
         token: String = this.generateToken()
     ): Cookie {
-        return Cookie(COOKIE_NAME, token)
-            .apply {
-                path = "/"
-                isHttpOnly = true
-                secure = true
-                setAttribute("SameSite", "None")
-            }
+        val cookie = Cookie(COOKIE_NAME, token)
+        return setHttpCookie(cookie)
     }
 
     fun deleteCookie(): Cookie {
-        return Cookie(COOKIE_NAME, "")
-            .apply {
-                path = "/"
-                maxAge = 0
-                isHttpOnly = true
-                secure = true
-                setAttribute("SameSite", "None")
-            }
+        val cookie = Cookie(COOKIE_NAME, "")
+        return setHttpCookie(cookie).apply { maxAge = 0 }
     }
 }

@@ -15,3 +15,13 @@ services:
     volumes:
       - ./db/mysql:/var/lib/mysql
     restart: always
+  backend:
+    build: ./openai-api
+    container_name: openai_helper_backend
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./openai-api/build/libs/openai-api-1.0.0.jar:/app/app.jar
+    restart: always
