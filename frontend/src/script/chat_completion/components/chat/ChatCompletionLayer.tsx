@@ -97,19 +97,13 @@ export function ChatCompletionLayer(): JSX.Element {
         setMessage("");
         setPending(true);
 
-        const url = process.env.VITE_BACKEND_API_URL + "/chat/stream";
+        const url = process.env.VITE_BACKEND_API_URL + "/api/chat/stream";
         const reqHeader = {
             Authorization: "Bearer " + (localStorage.getItem("openAiKey") ?? ""),
             "Content-Type": "application/json; charset=utf-8;"
         }
         const reqBody = getRequest({
             role: "user",
-            content: message
-        });
-
-        addHistory({
-            role: "assistant",
-            name: "user",
             content: message
         });
 
@@ -124,6 +118,13 @@ export function ChatCompletionLayer(): JSX.Element {
             return chunk;
         }).then((result) => {
             if (result !== undefined) {
+                // TODO: Add histories
+                addHistory({
+                    role: "assistant",
+                    name: "user",
+                    content: message
+                });
+
                 addHistory({
                     role: "assistant",
                     name: "ai",

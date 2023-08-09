@@ -15,6 +15,7 @@ export function requestStream(
         method: data.method,
         headers: data.headers,
         body: data.body,
+        credentials: "include",
     }).then((response) => {
         if (response.status === 200) {
             const reader = response.body?.getReader();
@@ -33,12 +34,7 @@ export function requestStream(
                     const chunk = decoder.decode(value);
                     buffer = buffer + chunk;
 
-                    // console.log("-------")
-                    // console.log("chunk:", JSON.stringify(chunk));
-                    // console.log("buffer:", JSON.stringify(buffer));
-
                     const valid = buffer.match(/data:((?!data:).)*\n\n/gs);
-                    // console.log("valid:", valid);
                     if (valid === null) {
                         return readChunk();
                     }
@@ -49,7 +45,6 @@ export function requestStream(
                             .replace("data:", "")
                         )
                         .reduce((acc, cur) => acc + cur, "");
-                    // console.log("regChunk:", JSON.stringify(regChunk));
 
                     text += chunkHandler(regChunk ?? "");
                     buffer = valid.reduce((tmp, c) => tmp.replace(c, ""), buffer);
