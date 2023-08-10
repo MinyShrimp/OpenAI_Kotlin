@@ -5,7 +5,6 @@ import mu.KotlinLogging
 import org.springframework.stereotype.Service
 import shrimp.openai_api.context.dto.request.AddHistoryRequest
 import shrimp.openai_api.context.entity.History
-import shrimp.openai_api.context.repository.ContextRepository
 import shrimp.openai_api.context.repository.HistoryRepository
 import java.util.*
 
@@ -13,7 +12,6 @@ import java.util.*
 class HistoryService(
     private val contextService: ContextService,
     private val historyRepository: HistoryRepository,
-    private val contextRepository: ContextRepository,
 ) {
     private val logger = KotlinLogging.logger {}
 
@@ -30,11 +28,6 @@ class HistoryService(
     ): History {
         val context = this.contextService.getContext(token, dto.id)
         val history = dto.convertEntity(context)
-        val savedHistory = this.historyRepository.save(history)
-        
-        context.updateAt = savedHistory.createAt
-        this.contextRepository.save(context)
-
-        return savedHistory
+        return this.historyRepository.save(history)
     }
 }

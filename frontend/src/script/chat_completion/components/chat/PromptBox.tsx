@@ -4,7 +4,6 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import {CopyBlock, dracula, tomorrow} from "react-code-blocks";
 import {CodeProps, ReactMarkdownProps, TableRowProps} from "react-markdown/lib/ast-to-react";
-import {IPrompt} from "../../../states/context";
 
 function PromptCodeBlock({inline, className, children}: CodeProps) {
     const match = /language-(\w+)/.exec(className ?? '');
@@ -33,7 +32,9 @@ const PromptTableRow = ({children}: TableRowProps) => <TableRow>{children}</Tabl
 const PromptTableCell = ({children}: ReactMarkdownProps) => <TableCell>{children}</TableCell>;
 
 export const PromptBox = forwardRef((
-    props: IPrompt,
+    props: {
+        name: string, content: string
+    },
     ref: ForwardedRef<HTMLDivElement> | undefined
 ) => {
     return <Box

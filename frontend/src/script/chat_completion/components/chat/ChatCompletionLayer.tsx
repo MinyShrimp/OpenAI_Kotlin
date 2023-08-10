@@ -21,6 +21,7 @@ import {GetHistoryList} from "../../api/history/GetHistoryList";
 
 export function ChatCompletionLayer(): JSX.Element {
     const [message, setMessage] = useState<string>("");
+    const [reqMsg, setReqMsg] = useState<string>("");
     const [respMsg, setRespMsg] = useState<string>("");
     const [pending, setPending] = useState<boolean>(false);
 
@@ -64,14 +65,25 @@ export function ChatCompletionLayer(): JSX.Element {
         };
     }
 
-    const addHistory = (history: IPrompt): void => {
+    const addHistories = (
+        userHistory: IPrompt,
+        aiHistory: IPrompt
+    ): void => {
         addHistoryMutation.mutate(
-            history,
+            userHistory,
             {
                 onSuccess: () => {
-                    setRespMsg("");
-                    setPending(false);
-                    moveScrollEnd();
+                    addHistoryMutation.mutate(
+                        aiHistory,
+                        {
+                            onSuccess: () => {
+                                setReqMsg("");
+                                setRespMsg("");
+                                setPending(false);
+                                moveScrollEnd();
+                            }
+                        }
+                    );
                 }
             }
         );
@@ -93,6 +105,7 @@ export function ChatCompletionLayer(): JSX.Element {
             return;
         }
 
+        setReqMsg(message);
         setRespMsg("");
         setMessage("");
         setPending(true);
@@ -118,14 +131,11 @@ export function ChatCompletionLayer(): JSX.Element {
             return chunk;
         }).then((result) => {
             if (result !== undefined) {
-                // TODO: Add histories
-                addHistory({
+                addHistories({
                     role: "assistant",
                     name: "user",
                     content: message
-                });
-
-                addHistory({
+                }, {
                     role: "assistant",
                     name: "ai",
                     content: result
@@ -155,16 +165,20 @@ export function ChatCompletionLayer(): JSX.Element {
                 {GetContext(contextState, nowContextIdState)?.history
                     .map(
                         (item, index) => <PromptBox
-                            role={item.role}
-                            name={item.name}
+                            name={item.name ?? ""}
                             content={item.content}
                             key={index}
                         />
                     )}
                 {
+                    !reqMsg
+                        ? null
+                        : <PromptBox name="user" content={reqMsg}/>
+                }
+                {
                     !respMsg
                         ? null
-                        : <PromptBox role="assistant" content={respMsg}/>
+                        : <PromptBox name="ai" content={respMsg}/>
                 }
             </Container>
             <Form

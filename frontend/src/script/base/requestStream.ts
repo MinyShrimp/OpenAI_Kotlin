@@ -40,10 +40,7 @@ export function requestStream(
                     }
 
                     const regChunk = valid
-                        .map(c => c
-                            .replace("\n\n", "")
-                            .replace("data:", "")
-                        )
+                        .map(c => c.replace(/^data:(.*)\n\n$/gs, "$1"))
                         .reduce((acc, cur) => acc + cur, "");
 
                     text += chunkHandler(regChunk ?? "");

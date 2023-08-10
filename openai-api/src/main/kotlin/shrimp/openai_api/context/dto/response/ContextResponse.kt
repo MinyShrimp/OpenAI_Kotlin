@@ -9,7 +9,8 @@ data class ContextResponse(
     val model: String,
     val title: String,
     val description: String?,
-    val updateAt: LocalDateTime
+    val updateAt: LocalDateTime,
+    val prePrompt: List<GetPromptResponse>
 ) {
     companion object {
         fun of(
@@ -20,7 +21,8 @@ data class ContextResponse(
                 model = context.model,
                 title = context.title,
                 description = context.description,
-                updateAt = context.updateAt
+                updateAt = context.updateAt,
+                prePrompt = context.prePromptList.map { GetPromptResponse.of(it) }
             )
         }
     }
