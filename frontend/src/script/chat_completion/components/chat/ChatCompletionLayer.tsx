@@ -125,10 +125,10 @@ export function ChatCompletionLayer(): JSX.Element {
             method: "POST",
             headers: reqHeader,
             body: JSON.stringify(reqBody)
-        }, (chunk) => {
-            setRespMsg(prevRespMsg => prevRespMsg + chunk);
+        }, (text) => {
+            setRespMsg(text);
             moveScrollEnd();
-            return chunk;
+            return text;
         }).then((result) => {
             if (result !== undefined) {
                 addHistories({

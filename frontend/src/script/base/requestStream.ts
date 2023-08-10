@@ -19,7 +19,6 @@ export function requestStream(
     }).then((response) => {
         if (response.status === 200) {
             const reader = response.body?.getReader();
-
             return readChunk();
 
             // @ts-ignore
@@ -29,8 +28,6 @@ export function requestStream(
                         return text;
                     }
 
-                    // TODO
-                    //  - code block 위치 수정
                     const chunk = decoder.decode(value);
                     buffer = buffer + chunk;
 
@@ -43,7 +40,7 @@ export function requestStream(
                         .map(c => c.replace(/^data:(.*)\n\n$/gs, "$1"))
                         .reduce((acc, cur) => acc + cur, "");
 
-                    text += chunkHandler(regChunk ?? "");
+                    text = chunkHandler(text + (regChunk ?? ""));
                     buffer = valid.reduce((tmp, c) => tmp.replace(c, ""), buffer);
                     return readChunk();
                 });
